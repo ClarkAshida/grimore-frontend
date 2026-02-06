@@ -37,6 +37,11 @@ export const routes: Routes = [
           ),
       },
       {
+        path: 'calendario',
+        loadChildren: () =>
+          import('./features/calendario/calendario-routing-module').then((m) => m.CalendarioRoutes),
+      },
+      {
         path: 'atividades',
         loadChildren: () =>
           import('./features/atividades/atividades-routing-module').then((m) => m.AtividadesRoutes),

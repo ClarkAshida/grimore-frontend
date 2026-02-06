@@ -1,0 +1,364 @@
+<div class="flex h-screen overflow-hidden bg-[#f0f1f4] dark:bg-[#0d1117]">
+  <!-- Sidebar -->
+  <aside
+    class="hidden lg:flex w-80 flex-col border-r border-gray-200 dark:border-gray-800 bg-white dark:bg-[#1a202e] h-full overflow-y-auto"
+  >
+    <div class="p-6">
+      <div class="flex items-center gap-3 mb-8">
+        <div class="size-10 rounded-xl bg-[#3f70e4] flex items-center justify-center text-white">
+          <span class="material-symbols-outlined text-2xl">school</span>
+        </div>
+        <h1 class="text-xl font-bold tracking-tight text-[#111317] dark:text-white">Grimore</h1>
+      </div>
+
+      <!-- Mini Calendar -->
+      <div class="mb-8">
+        <div class="flex items-center justify-between mb-4 px-2">
+          <button
+            (click)="mesAnterior()"
+            class="p-1 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full transition-colors"
+          >
+            <span class="material-symbols-outlined text-gray-500">chevron_left</span>
+          </button>
+          <p class="text-sm font-bold text-[#111317] dark:text-white">
+            {{ mesNome() }} {{ anoAtual() }}
+          </p>
+          <button
+            (click)="proximoMes()"
+            class="p-1 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full transition-colors"
+          >
+            <span class="material-symbols-outlined text-gray-500">chevron_right</span>
+          </button>
+        </div>
+
+        <div class="grid grid-cols-7 text-center mb-2">
+          @for (dia of ['D', 'S', 'T', 'Q', 'Q', 'S', 'S']; track $index) {
+            <span class="text-xs font-bold text-gray-400">{{ dia }}</span>
+          }
+        </div>
+
+        <div class="grid grid-cols-7 gap-y-2 text-center text-sm">
+          @for (diaObj of diasDoMes(); track $index) {
+            <button
+              [class]="
+                'h-7 flex items-center justify-center rounded-full transition-colors ' +
+                (diaObj.mesAtual ? 'text-[#111317] dark:text-white' : 'text-gray-300') +
+                (isHoje(diaObj.data)
+                  ? ' bg-[#3f70e4] text-white font-medium shadow-sm'
+                  : ' hover:bg-gray-100 dark:hover:bg-gray-700')
+              "
+              (click)="dataAtual.set(diaObj.data)"
+            >
+              {{ diaObj.dia }}
+            </button>
+          }
+        </div>
+      </div>
+
+      <div class="border-t border-gray-100 dark:border-gray-700 my-4"></div>
+
+      <!-- Filters Section -->
+      <h3 class="text-[#111317] dark:text-white text-base font-bold leading-tight px-1 pb-4 pt-2">
+        Minhas Disciplinas
+      </h3>
+      <div class="flex flex-col gap-3">
+        @for (disciplina of disciplinas; track disciplina.id) {
+          <label class="flex items-center gap-3 cursor-pointer group">
+            <input
+              type="checkbox"
+              [checked]="isDisciplinaSelecionada(disciplina.id)"
+              (change)="toggleDisciplina(disciplina.id)"
+              class="rounded border-gray-300 focus:ring-[#3f70e4] bg-gray-50 dark:bg-gray-700 dark:border-gray-600"
+            />
+            <div [class]="'size-3 rounded-full ' + getCorClass(disciplina.cor)"></div>
+            <span
+              class="text-sm font-medium text-gray-600 dark:text-gray-300 group-hover:text-[#3f70e4] transition-colors"
+            >
+              {{ disciplina.nome }}
+            </span>
+          </label>
+        }
+      </div>
+
+      <div class="mt-8 p-4 bg-[#3f70e4]/5 rounded-xl border border-[#3f70e4]/10">
+        <div class="flex items-start gap-3">
+          <span class="material-symbols-outlined text-[#3f70e4] mt-0.5">lightbulb</span>
+          <div>
+            <p class="text-sm font-bold text-[#3f70e4] mb-1">Dica Grimore</p>
+            <p class="text-xs text-gray-600 dark:text-gray-400">
+              Você tem 2 provas na próxima semana. Organize seus horários de estudo!
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Main Content -->
+  <main class="flex-1 flex flex-col h-full relative overflow-hidden">
+    <!-- Header -->
+    <header
+      class="bg-white dark:bg-[#1a202e] border-b border-gray-200 dark:border-gray-800 px-6 py-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4 z-10 shadow-sm"
+    >
+      <div class="flex flex-col">
+        <h2 class="text-[#111317] dark:text-white text-3xl font-black leading-tight tracking-tight">
+          Calendário
+        </h2>
+        <p class="text-[#646e87] dark:text-gray-400 text-sm font-normal leading-normal">
+          Gerencie seus horários acadêmicos e prazos.
+        </p>
+      </div>
+
+      <div class="flex items-center gap-4">
+        <!-- Segmented Buttons -->
+        <div
+          class="flex h-10 items-center justify-center rounded-xl bg-[#f0f1f4] dark:bg-gray-800 p-1"
+        >
+          <button
+            (click)="toggleVisualizacao('mes')"
+            [class]="
+              'flex cursor-pointer h-full items-center justify-center overflow-hidden rounded-lg px-4 text-sm font-medium leading-normal transition-all ' +
+              (visualizacao() === 'mes'
+                ? 'bg-white dark:bg-gray-700 shadow-sm text-[#111317] dark:text-white'
+                : 'text-[#646e87] dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700')
+            "
+          >
+            Mês
+          </button>
+          <button
+            (click)="toggleVisualizacao('semana')"
+            [class]="
+              'flex cursor-pointer h-full items-center justify-center overflow-hidden rounded-lg px-4 text-sm font-medium leading-normal transition-all ' +
+              (visualizacao() === 'semana'
+                ? 'bg-white dark:bg-gray-700 shadow-sm text-[#111317] dark:text-white'
+                : 'text-[#646e87] dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700')
+            "
+          >
+            Semana
+          </button>
+        </div>
+
+        <!-- Additional Actions -->
+        <button
+          class="flex items-center justify-center size-10 rounded-xl bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors text-[#111317] dark:text-white"
+        >
+          <span class="material-symbols-outlined">filter_list</span>
+        </button>
+      </div>
+    </header>
+
+    <!-- Calendar Navigation Bar -->
+    <div
+      class="bg-white dark:bg-[#1a202e] px-6 py-3 border-b border-gray-200 dark:border-gray-800 flex items-center justify-between"
+    >
+      <div class="flex items-center gap-4">
+        <button
+          (click)="visualizacao() === 'mes' ? mesAnterior() : semanaAnterior()"
+          class="p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg text-[#111317] dark:text-white transition-colors"
+        >
+          <span class="material-symbols-outlined">chevron_left</span>
+        </button>
+        <span class="text-xl font-bold text-[#111317] dark:text-white">
+          @if (visualizacao() === 'mes') {
+            {{ mesNome() }} {{ anoAtual() }}
+          } @else {
+            {{ periodoSemana() }}
+          }
+        </span>
+        <button
+          (click)="visualizacao() === 'mes' ? proximoMes() : proximaSemana()"
+          class="p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg text-[#111317] dark:text-white transition-colors"
+        >
+          <span class="material-symbols-outlined">chevron_right</span>
+        </button>
+        <button
+          (click)="irParaHoje()"
+          class="ml-2 px-3 py-1.5 text-sm font-medium text-[#3f70e4] bg-[#3f70e4]/10 hover:bg-[#3f70e4]/20 rounded-lg transition-colors"
+        >
+          Hoje
+        </button>
+      </div>
+
+      <!-- Search -->
+      <div
+        class="hidden sm:flex items-center bg-gray-100 dark:bg-gray-800 rounded-lg px-3 py-1.5 w-64"
+      >
+        <span class="material-symbols-outlined text-gray-500 text-[20px]">search</span>
+        <input
+          class="bg-transparent border-none focus:ring-0 text-sm w-full text-[#111317] dark:text-white placeholder-gray-500 ml-2"
+          placeholder="Buscar eventos..."
+          type="text"
+        />
+      </div>
+    </div>
+
+    <!-- Calendar Content -->
+    @if (visualizacao() === 'mes') {
+      <!-- Monthly View -->
+      <div class="flex-1 overflow-y-auto bg-white dark:bg-[#1a202e] p-6">
+        <div class="h-full flex flex-col min-w-[800px]">
+          <!-- Days Header -->
+          <div class="grid grid-cols-7 mb-2">
+            @for (
+              dia of ['Domingo', 'Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado'];
+              track $index
+            ) {
+              <div class="text-center text-sm font-semibold text-gray-500 uppercase tracking-wide">
+                {{ dia }}
+              </div>
+            }
+          </div>
+
+          <!-- Calendar Grid -->
+          <div
+            class="grid grid-cols-7 flex-1 border-l border-t border-gray-200 dark:border-gray-700"
+          >
+            @for (diaObj of diasDoMes(); track $index) {
+              <div
+                [class]="
+                  'border-r border-b border-gray-200 dark:border-gray-700 p-2 min-h-[120px] ' +
+                  (!diaObj.mesAtual
+                    ? 'bg-gray-50 dark:bg-gray-900/20'
+                    : 'bg-white dark:bg-[#1a202e]') +
+                  (isHoje(diaObj.data) ? ' ring-2 ring-[#3f70e4] ring-inset' : '')
+                "
+              >
+                <div class="flex justify-between items-start mb-2">
+                  <span
+                    [class]="
+                      'text-sm font-medium ' +
+                      (diaObj.mesAtual ? 'text-[#111317] dark:text-white' : 'text-gray-400') +
+                      (isHoje(diaObj.data)
+                        ? ' bg-[#3f70e4] text-white rounded-full size-6 flex items-center justify-center'
+                        : '')
+                    "
+                  >
+                    {{ diaObj.dia }}
+                  </span>
+                </div>
+
+                <div class="space-y-1">
+                  @for (evento of diaObj.eventos.slice(0, 3); track evento.id) {
+                    <div
+                      [class]="
+                        'text-xs px-2 py-1 rounded-md cursor-pointer hover:opacity-80 transition-opacity border-l-2 ' +
+                        getCorBgClass(evento.disciplinaCor || 'blue') +
+                        ' ' +
+                        getCorBorderClass(evento.disciplinaCor || 'blue')
+                      "
+                    >
+                      <div class="flex items-center gap-1">
+                        @if (evento.tipo === 'prova') {
+                          <span class="material-symbols-outlined text-[14px]">warning</span>
+                        }
+                        @if (evento.tipo === 'entrega') {
+                          <span class="material-symbols-outlined text-[14px]">priority_high</span>
+                        }
+                        <span class="font-medium truncate"
+                          >{{ evento.horaInicio }} {{ evento.titulo }}</span
+                        >
+                      </div>
+                    </div>
+                  }
+                  @if (diaObj.eventos.length > 3) {
+                    <button class="text-xs text-[#3f70e4] hover:underline">
+                      +{{ diaObj.eventos.length - 3 }} mais
+                    </button>
+                  }
+                </div>
+              </div>
+            }
+          </div>
+        </div>
+      </div>
+    } @else {
+      <!-- Weekly View -->
+      <div class="flex-1 overflow-hidden bg-white dark:bg-[#1a202e] flex flex-col">
+        <!-- Week Days Header -->
+        <div class="flex border-b border-gray-200 dark:border-gray-700 overflow-y-scroll ml-[60px]">
+          <div class="grid grid-cols-7 w-full min-w-[800px]">
+            @for (dia of semanaAtual(); track $index) {
+              <div class="py-3 text-center border-r border-gray-100 dark:border-gray-800">
+                <span class="block text-xs font-semibold text-gray-500 uppercase tracking-wide">{{
+                  dia.diaSemana
+                }}</span>
+                <div
+                  [class]="
+                    'size-8 mx-auto mt-1 flex items-center justify-center rounded-full font-bold ' +
+                    (isHoje(dia.data)
+                      ? 'bg-[#3f70e4] text-white'
+                      : 'text-[#111317] dark:text-white')
+                  "
+                >
+                  {{ dia.dia }}
+                </div>
+              </div>
+            }
+          </div>
+        </div>
+
+        <!-- Time Grid -->
+        <div class="flex-1 overflow-y-auto">
+          <div class="flex min-w-[860px]">
+            <!-- Time Labels -->
+            <div class="w-[60px] flex-shrink-0">
+              @for (horario of horariosSemanais(); track $index) {
+                <div
+                  class="h-20 border-b border-gray-100 dark:border-gray-800 flex items-start justify-end pr-2 pt-1"
+                >
+                  <span class="text-xs text-gray-500">{{ horario.hora }}</span>
+                </div>
+              }
+            </div>
+
+            <!-- Events Grid -->
+            <div class="flex-1 grid grid-cols-7">
+              @for (dia of semanaAtual(); track $index) {
+                <div class="border-l border-gray-200 dark:border-gray-700">
+                  @for (horario of horariosSemanais(); track $index) {
+                    <div class="h-20 border-b border-gray-100 dark:border-gray-800 p-1">
+                      @if (horario.eventos[$index]) {
+                        <div
+                          [class]="
+                            'h-full rounded-lg p-2 text-xs border-l-3 cursor-pointer hover:opacity-90 transition-opacity ' +
+                            getCorBgClass(horario.eventos[$index]!.disciplinaCor || 'blue') +
+                            ' ' +
+                            getCorBorderClass(horario.eventos[$index]!.disciplinaCor || 'blue')
+                          "
+                        >
+                          <div class="flex items-center gap-1 mb-1">
+                            <span class="material-symbols-outlined text-[14px]">
+                              {{ getTipoIcon(horario.eventos[$index]!.tipo) }}
+                            </span>
+                            <span class="font-bold">{{ horario.eventos[$index]!.titulo }}</span>
+                          </div>
+                          <div class="text-[10px] opacity-80">
+                            {{ horario.eventos[$index]!.horaInicio }} -
+                            {{ horario.eventos[$index]!.horaFim }}
+                          </div>
+                          @if (horario.eventos[$index]!.sala) {
+                            <div class="text-[10px] opacity-80 flex items-center gap-1">
+                              <span class="material-symbols-outlined text-[12px]">location_on</span>
+                              {{ horario.eventos[$index]!.sala }}
+                            </div>
+                          }
+                        </div>
+                      }
+                    </div>
+                  }
+                </div>
+              }
+            </div>
+          </div>
+        </div>
+      </div>
+    }
+
+    <!-- Floating Action Button -->
+    <button
+      class="fixed bottom-8 right-8 w-14 h-14 bg-[#3f70e4] text-white rounded-full shadow-lg hover:bg-[#3562c5] transition-all flex items-center justify-center z-50 hover:scale-110"
+    >
+      <span class="material-symbols-outlined text-2xl">add</span>
+    </button>
+  </main>
+</div>
