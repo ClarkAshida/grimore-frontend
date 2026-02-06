@@ -1,0 +1,120 @@
+<div class="container mx-auto px-4 py-8">
+  <div class="mb-8">
+    <h1 class="text-3xl font-bold text-gray-900">Dashboard</h1>
+    <p class="mt-2 text-gray-600">Bem-vindo ao Grimore</p>
+  </div>
+
+  <!-- Cards Grid -->
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+    <!-- Card Disciplinas -->
+    <div class="bg-white rounded-xl shadow-md p-6 hover:shadow-lg transition-shadow">
+      <div class="flex items-center justify-between mb-4">
+        <div class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
+          <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"
+            />
+          </svg>
+        </div>
+        <span class="text-2xl font-bold text-gray-900">0</span>
+      </div>
+      <h3 class="text-lg font-semibold text-gray-900 mb-2">Disciplinas</h3>
+      <p class="text-gray-600 text-sm mb-4">Gerencie suas disciplinas</p>
+      <a routerLink="/disciplinas" class="text-blue-600 hover:text-blue-700 font-medium text-sm">
+        Ver todas →
+      </a>
+    </div>
+
+    <!-- Card Atividades -->
+    <div class="bg-white rounded-xl shadow-md p-6 hover:shadow-lg transition-shadow">
+      <div class="flex items-center justify-between mb-4">
+        <div class="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center">
+          <svg
+            class="w-6 h-6 text-purple-600"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"
+            />
+          </svg>
+        </div>
+        <span class="text-2xl font-bold text-gray-900">0</span>
+      </div>
+      <h3 class="text-lg font-semibold text-gray-900 mb-2">Atividades</h3>
+      <p class="text-gray-600 text-sm mb-4">Acompanhe suas tarefas</p>
+      <a routerLink="/atividades" class="text-purple-600 hover:text-purple-700 font-medium text-sm">
+        Ver todas →
+      </a>
+    </div>
+
+    <!-- Card Pendentes -->
+    <div class="bg-white rounded-xl shadow-md p-6 hover:shadow-lg transition-shadow">
+      <div class="flex items-center justify-between mb-4">
+        <div class="w-12 h-12 bg-orange-100 rounded-lg flex items-center justify-center">
+          <svg
+            class="w-6 h-6 text-orange-600"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
+            />
+          </svg>
+        </div>
+        <span class="text-2xl font-bold text-gray-900">0</span>
+      </div>
+      <h3 class="text-lg font-semibold text-gray-900 mb-2">Pendentes</h3>
+      <p class="text-gray-600 text-sm mb-4">Atividades a fazer</p>
+      <a routerLink="/atividades" class="text-orange-600 hover:text-orange-700 font-medium text-sm">
+        Ver todas →
+      </a>
+    </div>
+  </div>
+
+  <!-- Quick Actions -->
+  <div class="mt-8">
+    <h2 class="text-xl font-bold text-gray-900 mb-4">Ações rápidas</h2>
+    <div class="flex flex-wrap gap-4">
+      <a
+        routerLink="/disciplinas/new"
+        class="flex items-center gap-2 px-6 py-3 bg-blue-600 text-white rounded-xl hover:bg-blue-700 transition-colors"
+      >
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M12 4v16m8-8H4"
+          />
+        </svg>
+        Nova Disciplina
+      </a>
+      <a
+        routerLink="/atividades/new"
+        class="flex items-center gap-2 px-6 py-3 bg-purple-600 text-white rounded-xl hover:bg-purple-700 transition-colors"
+      >
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M12 4v16m8-8H4"
+          />
+        </svg>
+        Nova Atividade
+      </a>
+    </div>
+  </div>
+</div>

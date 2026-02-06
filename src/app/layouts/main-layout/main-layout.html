@@ -1,0 +1,202 @@
+<div class="flex h-screen w-full bg-[#f8f9fb] dark:bg-[#111621] overflow-hidden">
+  <!-- Sidebar -->
+  <aside
+    class="w-64 bg-white dark:bg-[#1a202e] border-r border-gray-200 dark:border-gray-800 flex flex-col hidden md:flex"
+  >
+    <!-- Logo Section -->
+    <div class="flex items-center gap-3 p-6 border-b border-gray-200 dark:border-gray-800">
+      <div
+        class="w-10 h-10 bg-[#3f70e4]/20 rounded-xl flex items-center justify-center text-[#3f70e4]"
+      >
+        <span class="material-symbols-outlined text-2xl">local_library</span>
+      </div>
+      <div>
+        <h1 class="text-[#111317] dark:text-white font-black text-lg tracking-tight">Grimore</h1>
+        <p class="text-[#646e87] dark:text-gray-400 text-xs">Academic Manager</p>
+      </div>
+    </div>
+
+    <!-- Navigation Links -->
+    <nav class="flex-1 p-4 space-y-2 overflow-y-auto">
+      <a
+        routerLink="/dashboard"
+        routerLinkActive="bg-[#3f70e4]/10 text-[#3f70e4]"
+        [routerLinkActiveOptions]="{ exact: true }"
+        class="flex items-center gap-3 px-4 py-3 rounded-xl text-[#646e87] dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800 transition-all font-medium group"
+      >
+        <span class="material-symbols-outlined text-xl">dashboard</span>
+        <span>Dashboard</span>
+      </a>
+
+      <a
+        routerLink="/calendario"
+        routerLinkActive="bg-[#3f70e4]/10 text-[#3f70e4]"
+        class="flex items-center gap-3 px-4 py-3 rounded-xl text-[#646e87] dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800 transition-all font-medium group"
+      >
+        <span class="material-symbols-outlined text-xl">calendar_month</span>
+        <span>Calendário</span>
+      </a>
+
+      <a
+        routerLink="/disciplinas"
+        routerLinkActive="bg-[#3f70e4]/10 text-[#3f70e4]"
+        class="flex items-center gap-3 px-4 py-3 rounded-xl text-[#646e87] dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800 transition-all font-medium group"
+      >
+        <span class="material-symbols-outlined text-xl">book</span>
+        <span>Disciplinas</span>
+      </a>
+
+      <a
+        routerLink="/atividades"
+        routerLinkActive="bg-[#3f70e4]/10 text-[#3f70e4]"
+        class="flex items-center gap-3 px-4 py-3 rounded-xl text-[#646e87] dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800 transition-all font-medium group"
+      >
+        <span class="material-symbols-outlined text-xl">task</span>
+        <span>Tarefas</span>
+      </a>
+    </nav>
+
+    <!-- Settings Link -->
+    <div class="p-4 border-t border-gray-200 dark:border-gray-800">
+      <a
+        routerLink="/configuracoes"
+        routerLinkActive="bg-[#3f70e4]/10 text-[#3f70e4]"
+        class="flex items-center gap-3 px-4 py-3 rounded-xl text-[#646e87] dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800 transition-all font-medium"
+      >
+        <span class="material-symbols-outlined text-xl">settings</span>
+        <span>Configurações</span>
+      </a>
+    </div>
+  </aside>
+
+  <!-- Main Content Area -->
+  <div class="flex-1 flex flex-col overflow-hidden">
+    <!-- Top Navbar -->
+    <header
+      class="h-20 bg-white dark:bg-[#1a202e] border-b border-gray-200 dark:border-gray-800 flex items-center justify-between px-8 shrink-0"
+    >
+      <div class="flex flex-col gap-1">
+        <h2 class="text-[#111317] dark:text-white text-xl font-bold">Olá, {{ userName() }}</h2>
+        <p class="text-[#646e87] dark:text-gray-400 text-sm">{{ currentDate() }}</p>
+      </div>
+
+      <div class="flex items-center gap-4">
+        <!-- User Profile -->
+        <div class="flex items-center gap-3">
+          <span class="text-[#111317] dark:text-white text-sm font-medium hidden sm:block">{{
+            userName()
+          }}</span>
+          <div
+            class="w-10 h-10 bg-gradient-to-br from-[#3f70e4] to-[#5b8ef5] rounded-full flex items-center justify-center text-white font-bold text-sm"
+          >
+            {{ userInitials() }}
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Page Content -->
+    <main class="flex-1 overflow-y-auto p-8">
+      <router-outlet />
+    </main>
+  </div>
+
+  <!-- Floating Action Button -->
+  <button
+    (click)="openUploadModal()"
+    class="fixed bottom-8 right-8 w-14 h-14 bg-[#3f70e4] hover:bg-[#3563d1] text-white rounded-full shadow-lg shadow-[#3f70e4]/30 flex items-center justify-center transition-all hover:scale-110 z-40"
+    aria-label="Fazer upload de comprovante"
+  >
+    <span class="material-symbols-outlined text-3xl">add</span>
+  </button>
+
+  <!-- Upload Modal -->
+  @if (isModalOpen()) {
+    <div
+      class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm"
+      (click)="closeModal()"
+    >
+      <div
+        class="bg-white dark:bg-[#1a202e] rounded-3xl shadow-2xl max-w-lg w-full p-8 relative animate-fade-in"
+        (click)="$event.stopPropagation()"
+      >
+        <!-- Close Button -->
+        <button
+          (click)="closeModal()"
+          class="absolute top-6 right-6 w-8 h-8 flex items-center justify-center text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 transition-colors"
+        >
+          <span class="material-symbols-outlined">close</span>
+        </button>
+
+        <!-- Modal Header with Mascot -->
+        <div class="flex flex-col items-center text-center mb-6">
+          <div class="w-32 h-32 mb-4 relative">
+            <img
+              src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 200'%3E%3Cdefs%3E%3ClinearGradient id='grad' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' style='stop-color:%233f70e4;stop-opacity:1'/%3E%3Cstop offset='100%25' style='stop-color:%235b8ef5;stop-opacity:1'/%3E%3C/linearGradient%3E%3C/defs%3E%3Ccircle cx='100' cy='100' r='80' fill='white'/%3E%3Cpath d='M 60 70 L 50 60 L 60 50 L 70 60 Z' fill='url(%23grad)'/%3E%3Cpath d='M 140 70 L 130 60 L 140 50 L 150 60 Z' fill='url(%23grad)'/%3E%3Ccircle cx='100' cy='140' r='30' fill='none' stroke='%23111317' stroke-width='3'/%3E%3Cpath d='M 80 140 Q 100 160 120 140' fill='none' stroke='%23111317' stroke-width='3' stroke-linecap='round'/%3E%3Cpath d='M 70 100 Q 90 110 100 100' fill='url(%23grad)' opacity='0.3'/%3E%3Cpath d='M 100 100 Q 110 110 130 100' fill='url(%23grad)' opacity='0.3'/%3E%3Cpath d='M 90 50 Q 100 40 110 50 L 100 70 Z' fill='%23111317'/%3E%3Crect x='85' y='25' width='8' height='15' rx='4' fill='url(%23grad)'/%3E%3Crect x='107' y='25' width='8' height='15' rx='4' fill='url(%23grad)'/%3E%3Ccircle cx='75' cy='90' r='3' fill='%23111317'/%3E%3Ccircle cx='125' cy='90' r='3' fill='%23111317'/%3E%3Cpath d='M 60 120 Q 50 140 40 150' stroke='url(%23grad)' stroke-width='4' fill='none' stroke-linecap='round'/%3E%3Cpath d='M 140 120 Q 150 140 160 150' stroke='url(%23grad)' stroke-width='4' fill='none' stroke-linecap='round'/%3E%3C/svg%3E"
+              alt="Grimore Mascot"
+              class="w-full h-full"
+            />
+          </div>
+          <h3 class="text-[#111317] dark:text-white text-2xl font-black mb-2">Setup do Semestre</h3>
+          <p class="text-[#646e87] dark:text-gray-400 text-sm max-w-md">
+            Deixe a mágica acontecer. Envie seu PDF de matrícula e nós organizamos toda a sua vida
+            acadêmica.
+          </p>
+        </div>
+
+        <!-- Upload Area -->
+        <div
+          class="border-2 border-dashed border-[#dcdfe5] dark:border-gray-700 rounded-xl p-8 text-center hover:border-[#3f70e4] transition-colors cursor-pointer relative group"
+          (click)="fileInput.click()"
+          (dragover)="onDragOver($event)"
+          (drop)="onDrop($event)"
+        >
+          <input
+            #fileInput
+            type="file"
+            accept=".pdf"
+            class="hidden"
+            (change)="onFileSelected($event)"
+          />
+
+          @if (uploadProgress() === 0) {
+            <div class="flex flex-col items-center gap-3">
+              <div
+                class="w-16 h-16 bg-[#3f70e4]/10 rounded-2xl flex items-center justify-center text-[#3f70e4]"
+              >
+                <span class="material-symbols-outlined text-3xl">cloud_upload</span>
+              </div>
+              <div>
+                <p class="text-[#3f70e4] font-bold mb-1">Clique para enviar ou arraste aqui</p>
+                <p class="text-[#646e87] dark:text-gray-400 text-sm">
+                  Importar Comprovante de Matrícula (PDF)
+                </p>
+              </div>
+            </div>
+          } @else {
+            <div class="flex flex-col items-center gap-3">
+              <div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2 overflow-hidden">
+                <div
+                  class="bg-[#3f70e4] h-full transition-all duration-300"
+                  [style.width.%]="uploadProgress()"
+                ></div>
+              </div>
+              <p class="text-[#646e87] dark:text-gray-400 text-sm">
+                Lendo horários... {{ uploadProgress() }}%
+              </p>
+            </div>
+          }
+        </div>
+
+        <!-- Skip Option -->
+        <button
+          (click)="skipSetup()"
+          class="mt-6 w-full text-[#646e87] dark:text-gray-400 hover:text-[#3f70e4] dark:hover:text-[#3f70e4] text-sm font-medium transition-colors flex items-center justify-center gap-2"
+        >
+          <span>Pular e configurar manualmente depois</span>
+          <span class="material-symbols-outlined text-lg">arrow_forward</span>
+        </button>
+      </div>
+    </div>
+  }
+</div>

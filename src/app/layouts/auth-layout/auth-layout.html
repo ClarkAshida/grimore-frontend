@@ -1,0 +1,52 @@
+<div class="flex min-h-screen w-full flex-row">
+  <!-- Left Panel: Brand & Vision -->
+  <div
+    class="hidden lg:flex lg:w-1/2 bg-[#3f70e4] flex-col justify-center items-start p-16 relative overflow-hidden"
+  >
+    <!-- Decorative Background Elements -->
+    <div
+      class="absolute top-0 right-0 -mr-20 -mt-20 w-96 h-96 bg-white/10 rounded-full blur-3xl pointer-events-none"
+    ></div>
+    <div
+      class="absolute bottom-0 left-0 -ml-20 -mb-20 w-80 h-80 bg-black/10 rounded-full blur-3xl pointer-events-none"
+    ></div>
+
+    <div class="relative z-10 flex flex-col gap-6 max-w-lg">
+      <!-- Icon -->
+      <div
+        class="w-16 h-16 bg-white/20 rounded-2xl flex items-center justify-center backdrop-blur-sm mb-4"
+      >
+        <span class="material-symbols-outlined text-white text-4xl">local_library</span>
+      </div>
+
+      <!-- Brand Name -->
+      <h1 class="text-white text-6xl font-black tracking-[-0.03em] leading-[1.1]">Grimore</h1>
+
+      <!-- Tagline -->
+      <p class="text-white/90 text-2xl font-medium leading-relaxed tracking-tight">
+        Sua vida acadêmica em ordem.
+      </p>
+
+      <!-- Description -->
+      <p class="text-white/70 text-base font-normal max-w-md mt-2">
+        O assistente inteligente para organizar seus estudos, prazos e notas em um só lugar.
+      </p>
+    </div>
+  </div>
+
+  <!-- Right Panel: Content (Forms) -->
+  <div
+    class="w-full lg:w-1/2 flex flex-col justify-center items-center p-6 sm:p-12 bg-white dark:bg-[#111621] relative"
+  >
+    <div class="w-full max-w-[440px] flex flex-col gap-8">
+      <!-- Mobile Logo (Visible only on small screens) -->
+      <div class="lg:hidden flex items-center gap-2 mb-4 text-[#3f70e4]">
+        <span class="material-symbols-outlined text-3xl">local_library</span>
+        <span class="text-2xl font-black tracking-tight">Grimore</span>
+      </div>
+
+      <!-- Content from child components -->
+      <router-outlet />
+    </div>
+  </div>
+</div>
