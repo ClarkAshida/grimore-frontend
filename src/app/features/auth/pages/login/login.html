@@ -41,12 +41,9 @@
 
   <!-- Password Field -->
   <label class="flex flex-col gap-2">
-    <div class="flex justify-between items-center ml-1">
-      <span class="text-[#111317] dark:text-gray-200 text-sm font-bold leading-normal">Senha</span>
-      <a routerLink="/auth/forgot-password" class="text-[#3f70e4] text-sm font-bold hover:underline"
-        >Esqueceu a senha?</a
-      >
-    </div>
+    <span class="text-[#111317] dark:text-gray-200 text-sm font-bold leading-normal ml-1"
+      >Senha</span
+    >
     <div class="relative">
       <input
         formControlName="password"
@@ -131,9 +128,9 @@
 
 <!-- Divider -->
 <div class="relative flex py-1 items-center">
-  <div class="flex-grow border-t border-[#dcdfe5] dark:border-gray-700"></div>
-  <span class="flex-shrink-0 mx-4 text-[#646e87] dark:text-gray-500 text-sm font-medium">ou</span>
-  <div class="flex-grow border-t border-[#dcdfe5] dark:border-gray-700"></div>
+  <div class="grow border-t border-[#dcdfe5] dark:border-gray-700"></div>
+  <span class="shrink-0 mx-4 text-[#646e87] dark:text-gray-500 text-sm font-medium">ou</span>
+  <div class="grow border-t border-[#dcdfe5] dark:border-gray-700"></div>
 </div>
 
 <!-- Google Login -->

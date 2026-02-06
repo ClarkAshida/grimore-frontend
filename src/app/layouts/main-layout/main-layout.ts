@@ -1,6 +1,7 @@
 import { Component, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterOutlet, RouterLink, RouterLinkActive } from '@angular/router';
+import { RouterOutlet, RouterLink, RouterLinkActive, Router } from '@angular/router';
+import { AuthService } from '../../core/services/auth';
 
 @Component({
   selector: 'app-main-layout',
@@ -14,6 +15,11 @@ export class MainLayout {
   uploadProgress = signal(0);
   userName = signal('Estudante');
   currentDate = signal(this.formatDate());
+
+  constructor(
+    private authService: AuthService,
+    private router: Router,
+  ) {}
 
   userInitials() {
     return this.userName()
@@ -116,5 +122,10 @@ export class MainLayout {
     this.closeModal();
     // TODO: Navegar para configuração manual
     console.log('Setup manual');
+  }
+
+  logout(): void {
+    this.authService.logout();
+    this.router.navigate(['/auth/login']);
   }
 }

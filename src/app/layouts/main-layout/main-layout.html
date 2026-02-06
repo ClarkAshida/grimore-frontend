@@ -1,7 +1,7 @@
 <div class="flex h-screen w-full bg-[#f8f9fb] dark:bg-[#111621] overflow-hidden">
   <!-- Sidebar -->
   <aside
-    class="w-64 bg-white dark:bg-[#1a202e] border-r border-gray-200 dark:border-gray-800 flex flex-col hidden md:flex"
+    class="w-64 bg-white dark:bg-[#1a202e] border-r border-gray-200 dark:border-gray-800 flex flex-col md:flex"
   >
     <!-- Logo Section -->
     <div class="flex items-center gap-3 p-6 border-b border-gray-200 dark:border-gray-800">
@@ -56,8 +56,16 @@
       </a>
     </nav>
 
-    <!-- Settings Link -->
-    <div class="p-4 border-t border-gray-200 dark:border-gray-800">
+    <!-- Bottom Actions -->
+    <div class="p-4 border-t border-gray-200 dark:border-gray-800 space-y-2">
+      <button
+        (click)="logout()"
+        class="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 transition-all font-medium group"
+      >
+        <span class="material-symbols-outlined text-xl">logout</span>
+        <span>Sair</span>
+      </button>
+
       <a
         routerLink="/configuracoes"
         routerLinkActive="bg-[#3f70e4]/10 text-[#3f70e4]"
@@ -82,16 +90,19 @@
 
       <div class="flex items-center gap-4">
         <!-- User Profile -->
-        <div class="flex items-center gap-3">
+        <a
+          routerLink="/perfil"
+          class="flex items-center gap-3 hover:bg-gray-50 dark:hover:bg-gray-800 px-3 py-2 rounded-xl transition-all group"
+        >
           <span class="text-[#111317] dark:text-white text-sm font-medium hidden sm:block">{{
             userName()
           }}</span>
           <div
-            class="w-10 h-10 bg-gradient-to-br from-[#3f70e4] to-[#5b8ef5] rounded-full flex items-center justify-center text-white font-bold text-sm"
+            class="w-10 h-10 bg-linear-to-br from-[#3f70e4] to-[#5b8ef5] rounded-full flex items-center justify-center text-white font-bold text-sm ring-2 ring-transparent group-hover:ring-[#3f70e4]/20 transition-all"
           >
             {{ userInitials() }}
           </div>
-        </div>
+        </a>
       </div>
     </header>
 

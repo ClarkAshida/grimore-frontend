@@ -65,6 +65,10 @@ export const routes: Routes = [
         loadChildren: () =>
           import('./features/atividades/atividades-routing-module').then((m) => m.AtividadesRoutes),
       },
+      {
+        path: 'perfil',
+        loadComponent: () => import('./features/perfil/pages/perfil/perfil').then((m) => m.Perfil),
+      },
       { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
     ],
   },

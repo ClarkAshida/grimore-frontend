@@ -1,0 +1,281 @@
+<div class="flex flex-col h-full max-w-4xl mx-auto">
+  <!-- Header -->
+  <div class="mb-8">
+    <h1 class="text-3xl font-bold text-slate-900 dark:text-white mb-2">Meu Perfil</h1>
+    <p class="text-slate-600 dark:text-slate-400">
+      Gerencie suas informações pessoais e configurações de conta
+    </p>
+  </div>
+
+  <!-- Success Message -->
+  @if (showSuccessMessage()) {
+    <div
+      class="mb-6 bg-emerald-50 dark:bg-emerald-900/20 border border-emerald-200 dark:border-emerald-800 text-emerald-700 dark:text-emerald-400 px-4 py-3 rounded-xl flex items-center gap-2 animate-in fade-in"
+    >
+      <span class="material-symbols-outlined">check_circle</span>
+      <span class="font-medium">Perfil atualizado com sucesso!</span>
+    </div>
+  }
+
+  <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+    <!-- Profile Card -->
+    <div class="lg:col-span-1">
+      <div
+        class="bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700 p-6"
+      >
+        <div class="flex flex-col items-center">
+          <!-- Profile Picture -->
+          <div class="relative mb-4">
+            <div
+              class="w-32 h-32 rounded-full bg-linear-to-br from-[#3f70e4] to-[#2d5acc] flex items-center justify-center text-white text-4xl font-bold shadow-lg"
+            >
+              {{ userInitials() }}
+            </div>
+            <button
+              (click)="changeProfilePicture()"
+              class="absolute bottom-0 right-0 w-10 h-10 bg-[#3f70e4] hover:bg-[#2d5acc] text-white rounded-full flex items-center justify-center shadow-lg transition-colors"
+            >
+              <span class="material-symbols-outlined text-xl">photo_camera</span>
+            </button>
+          </div>
+
+          <!-- User Info -->
+          <h2 class="text-xl font-bold text-slate-900 dark:text-white text-center mb-1">
+            {{ userData().nome }}
+          </h2>
+          <p class="text-slate-600 dark:text-slate-400 text-sm text-center mb-1">
+            {{ userData().email }}
+          </p>
+          <div class="mt-4 w-full space-y-2">
+            <div class="bg-slate-50 dark:bg-slate-700 rounded-lg p-3">
+              <p class="text-xs text-slate-600 dark:text-slate-400 mb-1">Curso</p>
+              <p class="font-semibold text-slate-900 dark:text-white text-sm">
+                {{ userData().curso }}
+              </p>
+            </div>
+            <div class="bg-slate-50 dark:bg-slate-700 rounded-lg p-3">
+              <p class="text-xs text-slate-600 dark:text-slate-400 mb-1">Período</p>
+              <p class="font-semibold text-slate-900 dark:text-white text-sm">
+                {{ userData().periodo }}
+              </p>
+            </div>
+            <div class="bg-slate-50 dark:bg-slate-700 rounded-lg p-3">
+              <p class="text-xs text-slate-600 dark:text-slate-400 mb-1">Matrícula</p>
+              <p class="font-semibold text-slate-900 dark:text-white text-sm">
+                {{ userData().matricula }}
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="lg:col-span-2 space-y-6">
+      <!-- Personal Information -->
+      <div
+        class="bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700 p-6"
+      >
+        <div class="flex items-center justify-between mb-6">
+          <div>
+            <h3 class="text-xl font-bold text-slate-900 dark:text-white">Informações Pessoais</h3>
+            <p class="text-sm text-slate-600 dark:text-slate-400">Atualize seus dados pessoais</p>
+          </div>
+          @if (!isEditing()) {
+            <button
+              (click)="toggleEdit()"
+              class="flex items-center gap-2 px-4 py-2 bg-[#3f70e4] hover:bg-[#2d5acc] text-white rounded-lg font-medium transition-colors"
+            >
+              <span class="material-symbols-outlined text-xl">edit</span>
+              <span>Editar</span>
+            </button>
+          }
+        </div>
+
+        <form [formGroup]="profileForm" (ngSubmit)="onSubmit()" class="space-y-4">
+          <!-- Nome Completo -->
+          <div class="flex flex-col gap-2">
+            <label class="text-sm font-semibold text-slate-900 dark:text-white"
+              >Nome Completo</label
+            >
+            <input
+              formControlName="nome"
+              type="text"
+              class="w-full h-12 px-4 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-700 text-slate-900 dark:text-white placeholder:text-slate-400 focus:border-[#3f70e4] focus:ring-2 focus:ring-[#3f70e4]/20 transition-all outline-none disabled:opacity-60"
+            />
+          </div>
+
+          <!-- Email (readonly) -->
+          <div class="flex flex-col gap-2">
+            <label class="text-sm font-semibold text-slate-900 dark:text-white"
+              >Email Acadêmico</label
+            >
+            <input
+              formControlName="email"
+              type="email"
+              class="w-full h-12 px-4 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-700 text-slate-900 dark:text-white opacity-60"
+            />
+            <p class="text-xs text-slate-500 dark:text-slate-400">O email não pode ser alterado</p>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <!-- Telefone -->
+            <div class="flex flex-col gap-2">
+              <label class="text-sm font-semibold text-slate-900 dark:text-white">Telefone</label>
+              <input
+                formControlName="telefone"
+                type="tel"
+                class="w-full h-12 px-4 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-700 text-slate-900 dark:text-white placeholder:text-slate-400 focus:border-[#3f70e4] focus:ring-2 focus:ring-[#3f70e4]/20 transition-all outline-none disabled:opacity-60"
+              />
+            </div>
+
+            <!-- Data de Nascimento (readonly) -->
+            <div class="flex flex-col gap-2">
+              <label class="text-sm font-semibold text-slate-900 dark:text-white"
+                >Data de Nascimento</label
+              >
+              <input
+                formControlName="dataNascimento"
+                type="text"
+                class="w-full h-12 px-4 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-700 text-slate-900 dark:text-white opacity-60"
+              />
+            </div>
+          </div>
+
+          <!-- Action Buttons -->
+          @if (isEditing()) {
+            <div class="flex gap-3 pt-4">
+              <button
+                type="submit"
+                [disabled]="profileForm.invalid || isLoading()"
+                class="flex-1 flex items-center justify-center gap-2 h-12 bg-[#3f70e4] hover:bg-[#2d5acc] text-white font-bold rounded-xl transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                @if (isLoading()) {
+                  <div
+                    class="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"
+                  ></div>
+                  <span>Salvando...</span>
+                } @else {
+                  <span class="material-symbols-outlined">save</span>
+                  <span>Salvar Alterações</span>
+                }
+              </button>
+              <button
+                type="button"
+                (click)="toggleEdit()"
+                [disabled]="isLoading()"
+                class="px-6 h-12 bg-slate-200 dark:bg-slate-700 hover:bg-slate-300 dark:hover:bg-slate-600 text-slate-900 dark:text-white font-bold rounded-xl transition-colors disabled:opacity-50"
+              >
+                Cancelar
+              </button>
+            </div>
+          }
+        </form>
+      </div>
+
+      <!-- Security Section -->
+      <div
+        class="bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700 p-6"
+      >
+        <h3 class="text-xl font-bold text-slate-900 dark:text-white mb-4">Segurança</h3>
+        <div class="space-y-3">
+          <button
+            (click)="changePassword()"
+            class="w-full flex items-center justify-between p-4 bg-slate-50 dark:bg-slate-700 hover:bg-slate-100 dark:hover:bg-slate-600 rounded-xl transition-colors group"
+          >
+            <div class="flex items-center gap-3">
+              <div
+                class="w-10 h-10 bg-blue-100 dark:bg-blue-900/30 rounded-lg flex items-center justify-center"
+              >
+                <span class="material-symbols-outlined text-blue-600 dark:text-blue-400">lock</span>
+              </div>
+              <div class="text-left">
+                <p class="font-semibold text-slate-900 dark:text-white">Alterar Senha</p>
+                <p class="text-sm text-slate-600 dark:text-slate-400">
+                  Atualize sua senha regularmente
+                </p>
+              </div>
+            </div>
+            <span
+              class="material-symbols-outlined text-slate-400 group-hover:text-slate-600 dark:group-hover:text-slate-300"
+              >arrow_forward</span
+            >
+          </button>
+        </div>
+      </div>
+
+      <!-- Danger Zone -->
+      <div
+        class="bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-red-200 dark:border-red-900 p-6"
+      >
+        <h3 class="text-xl font-bold text-red-600 dark:text-red-400 mb-2">Zona de Perigo</h3>
+        <p class="text-sm text-slate-600 dark:text-slate-400 mb-4">
+          Ações irreversíveis relacionadas à sua conta
+        </p>
+        <button
+          (click)="openDeleteModal()"
+          class="flex items-center gap-2 px-4 py-3 bg-red-50 dark:bg-red-900/20 hover:bg-red-100 dark:hover:bg-red-900/30 text-red-600 dark:text-red-400 font-semibold rounded-xl transition-colors border border-red-200 dark:border-red-800"
+        >
+          <span class="material-symbols-outlined">delete_forever</span>
+          <span>Solicitar Exclusão da Conta</span>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Delete Account Modal -->
+@if (showDeleteModal()) {
+  <div
+    class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4 animate-in fade-in"
+    (click)="closeDeleteModal()"
+  >
+    <div
+      class="bg-white dark:bg-slate-800 rounded-2xl max-w-md w-full p-6 shadow-2xl animate-in zoom-in-95"
+      (click)="$event.stopPropagation()"
+    >
+      <!-- Icon -->
+      <div
+        class="w-16 h-16 bg-red-100 dark:bg-red-900/30 rounded-full flex items-center justify-center mx-auto mb-4"
+      >
+        <span class="material-symbols-outlined text-red-600 dark:text-red-400 text-3xl"
+          >warning</span
+        >
+      </div>
+
+      <!-- Content -->
+      <h3 class="text-xl font-bold text-slate-900 dark:text-white text-center mb-2">
+        Solicitar Exclusão da Conta?
+      </h3>
+      <p class="text-slate-600 dark:text-slate-400 text-center mb-6">
+        Você receberá um email com instruções para confirmar a exclusão. Esta ação é
+        <strong>irreversível</strong> e todos os seus dados serão permanentemente deletados.
+      </p>
+
+      <!-- Actions -->
+      <div class="flex gap-3">
+        <button
+          (click)="closeDeleteModal()"
+          [disabled]="isLoading()"
+          class="flex-1 h-12 bg-slate-200 dark:bg-slate-700 hover:bg-slate-300 dark:hover:bg-slate-600 text-slate-900 dark:text-white font-bold rounded-xl transition-colors disabled:opacity-50"
+        >
+          Cancelar
+        </button>
+        <button
+          (click)="requestAccountDeletion()"
+          [disabled]="isLoading()"
+          class="flex-1 h-12 bg-red-600 hover:bg-red-700 text-white font-bold rounded-xl transition-colors flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+        >
+          @if (isLoading()) {
+            <div
+              class="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"
+            ></div>
+            <span>Enviando...</span>
+          } @else {
+            <span>Confirmar Exclusão</span>
+          }
+        </button>
+      </div>
+    </div>
+  </div>
+}
