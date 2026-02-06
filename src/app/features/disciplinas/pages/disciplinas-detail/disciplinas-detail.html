@@ -1,1 +1,338 @@
-<p>disciplinas-detail works!</p>
+@if (disciplina(); as disc) {
+  <div class="min-h-full bg-[#f0f1f4] dark:bg-[#0d1117]">
+    <!-- Header -->
+    <header
+      class="bg-white/80 dark:bg-[#1a202e]/80 backdrop-blur-md px-8 py-6 border-b border-gray-100 dark:border-gray-800"
+    >
+      <div class="max-w-7xl mx-auto">
+        <a
+          routerLink="/disciplinas"
+          class="flex items-center gap-2 text-[#3f70e4] cursor-pointer hover:opacity-80 transition-opacity mb-6"
+        >
+          <span class="material-symbols-outlined text-2xl">arrow_back</span>
+          <span class="font-medium text-sm">Voltar para Disciplinas</span>
+        </a>
+
+        <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-6">
+          <div class="flex items-start gap-4">
+            <div
+              [class]="
+                'w-16 h-16 rounded-2xl flex items-center justify-center ' + getCorClass(disc.cor)
+              "
+            >
+              <span class="material-symbols-outlined text-3xl text-white">book_2</span>
+            </div>
+            <div>
+              <div class="flex items-center gap-2 mb-2">
+                <span
+                  [class]="
+                    'text-xs font-bold px-2.5 py-1 rounded-lg uppercase tracking-wider ' +
+                    getCorBadgeClass(disc.cor)
+                  "
+                >
+                  {{ disc.codigo }}
+                </span>
+                <span
+                  class="text-xs px-2.5 py-1 rounded-lg bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400 font-medium"
+                >
+                  {{
+                    disc.status === 'ativa'
+                      ? 'Ativa'
+                      : disc.status === 'este-semestre'
+                        ? 'Este Semestre'
+                        : 'Arquivada'
+                  }}
+                </span>
+              </div>
+              <h1 class="text-2xl md:text-3xl font-bold text-[#111317] dark:text-white mb-1">
+                {{ disc.nome }}
+              </h1>
+              <p class="text-[#646e87] dark:text-gray-400">{{ disc.professor }}</p>
+            </div>
+          </div>
+
+          <div class="flex gap-2">
+            <button
+              (click)="editDisciplina()"
+              class="flex items-center gap-2 px-4 py-2.5 bg-[#3f70e4] text-white rounded-xl hover:bg-[#3562c5] transition-colors font-medium"
+            >
+              <span class="material-symbols-outlined text-[18px]">edit</span>
+              Editar
+            </button>
+            <button
+              (click)="confirmDelete()"
+              class="p-2.5 bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 rounded-xl hover:bg-red-100 dark:hover:bg-red-900/30 transition-colors"
+            >
+              <span class="material-symbols-outlined text-[18px]">delete</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Content -->
+    <div class="px-8 py-8">
+      <div class="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <!-- Left Column: Stats -->
+        <div class="lg:col-span-2 flex flex-col gap-6">
+          <!-- Stats Cards -->
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <!-- Frequência Card -->
+            <div
+              class="bg-white dark:bg-[#1a202e] rounded-2xl p-5 shadow-sm border border-gray-100 dark:border-gray-800"
+            >
+              <div class="flex items-center gap-3 mb-3">
+                <div
+                  class="w-10 h-10 bg-blue-100 dark:bg-blue-900/30 rounded-xl flex items-center justify-center"
+                >
+                  <span class="material-symbols-outlined text-blue-600 dark:text-blue-400"
+                    >check_circle</span
+                  >
+                </div>
+                <span class="text-sm font-semibold text-[#646e87] dark:text-gray-400 uppercase"
+                  >Frequência</span
+                >
+              </div>
+              <p class="text-3xl font-bold text-[#111317] dark:text-white">
+                {{ disc.frequencia }}%
+              </p>
+              <div class="w-full bg-gray-100 dark:bg-gray-800 rounded-full h-2 mt-3">
+                <div
+                  [class]="
+                    'h-2 rounded-full ' +
+                    (disc.frequencia >= 80
+                      ? 'bg-green-500'
+                      : disc.frequencia >= 60
+                        ? 'bg-amber-500'
+                        : 'bg-rose-500')
+                  "
+                  [style.width.%]="disc.frequencia"
+                ></div>
+              </div>
+            </div>
+
+            <!-- Faltas Card -->
+            <div
+              class="bg-white dark:bg-[#1a202e] rounded-2xl p-5 shadow-sm border border-gray-100 dark:border-gray-800"
+            >
+              <div class="flex items-center gap-3 mb-3">
+                <div
+                  class="w-10 h-10 bg-amber-100 dark:bg-amber-900/30 rounded-xl flex items-center justify-center"
+                >
+                  <span class="material-symbols-outlined text-amber-600 dark:text-amber-400"
+                    >event_busy</span
+                  >
+                </div>
+                <span class="text-sm font-semibold text-[#646e87] dark:text-gray-400 uppercase"
+                  >Faltas</span
+                >
+              </div>
+              <p class="text-3xl font-bold text-[#111317] dark:text-white">{{ disc.faltas }}</p>
+              <p class="text-xs text-[#646e87] dark:text-gray-500 mt-2">
+                Máximo: {{ disc.cargaHoraria * 0.25 | number: '1.0-0' }} faltas
+              </p>
+            </div>
+
+            <!-- Carga Horária Card -->
+            <div
+              class="bg-white dark:bg-[#1a202e] rounded-2xl p-5 shadow-sm border border-gray-100 dark:border-gray-800"
+            >
+              <div class="flex items-center gap-3 mb-3">
+                <div
+                  class="w-10 h-10 bg-violet-100 dark:bg-violet-900/30 rounded-xl flex items-center justify-center"
+                >
+                  <span class="material-symbols-outlined text-violet-600 dark:text-violet-400"
+                    >schedule</span
+                  >
+                </div>
+                <span class="text-sm font-semibold text-[#646e87] dark:text-gray-400 uppercase"
+                  >Carga</span
+                >
+              </div>
+              <p class="text-3xl font-bold text-[#111317] dark:text-white">
+                {{ disc.cargaHoraria }}h
+              </p>
+              <p class="text-xs text-[#646e87] dark:text-gray-500 mt-2">Total do semestre</p>
+            </div>
+          </div>
+
+          <!-- Horários Section -->
+          <div
+            class="bg-white dark:bg-[#1a202e] rounded-2xl p-6 shadow-sm border border-gray-100 dark:border-gray-800"
+          >
+            <div class="flex items-center gap-3 mb-6">
+              <span class="material-symbols-outlined text-[#3f70e4]">calendar_month</span>
+              <h2 class="text-xl font-bold text-[#111317] dark:text-white">Horários das Aulas</h2>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              @for (horario of disc.horarios; track $index) {
+                <div class="bg-[#f0f1f4] dark:bg-gray-800/50 rounded-xl p-4">
+                  <div class="flex items-center gap-3 mb-2">
+                    <div
+                      [class]="
+                        'w-10 h-10 rounded-lg flex items-center justify-center ' +
+                        getCorClass(disc.cor)
+                      "
+                    >
+                      <span class="material-symbols-outlined text-white text-[20px]">schedule</span>
+                    </div>
+                    <div>
+                      <p class="font-bold text-[#111317] dark:text-white">
+                        {{ getDiaNome(horario.diaSemana) }}
+                      </p>
+                      <p class="text-xs text-[#646e87] dark:text-gray-400">
+                        {{ getTurnoNome(horario.turno) }}
+                      </p>
+                    </div>
+                  </div>
+                  <div class="flex items-center gap-2 mt-3">
+                    <span class="text-sm font-medium text-[#111317] dark:text-white">{{
+                      horario.horaInicio
+                    }}</span>
+                    <span class="text-[#646e87] dark:text-gray-400">→</span>
+                    <span class="text-sm font-medium text-[#111317] dark:text-white">{{
+                      horario.horaFim
+                    }}</span>
+                  </div>
+                </div>
+              }
+            </div>
+          </div>
+
+          <!-- Histórico de Faltas (Placeholder) -->
+          <div
+            class="bg-white dark:bg-[#1a202e] rounded-2xl p-6 shadow-sm border border-gray-100 dark:border-gray-800"
+          >
+            <div class="flex items-center gap-3 mb-6">
+              <span class="material-symbols-outlined text-[#3f70e4]">history</span>
+              <h2 class="text-xl font-bold text-[#111317] dark:text-white">Histórico de Faltas</h2>
+            </div>
+
+            <div class="space-y-3">
+              @for (item of [1, 2, 3]; track $index) {
+                <div
+                  class="flex items-center justify-between p-4 bg-[#f0f1f4] dark:bg-gray-800/50 rounded-xl"
+                >
+                  <div class="flex items-center gap-3">
+                    <div class="w-2 h-2 bg-red-500 rounded-full"></div>
+                    <div>
+                      <p class="font-medium text-[#111317] dark:text-white">Falta registrada</p>
+                      <p class="text-xs text-[#646e87] dark:text-gray-400">15 de Janeiro de 2026</p>
+                    </div>
+                  </div>
+                  <span
+                    class="text-xs px-2.5 py-1 rounded-lg bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400 font-medium"
+                  >
+                    Falta
+                  </span>
+                </div>
+              }
+            </div>
+          </div>
+        </div>
+
+        <!-- Right Column: Quick Actions & Info -->
+        <div class="flex flex-col gap-6">
+          <!-- Quick Actions -->
+          <div
+            class="bg-white dark:bg-[#1a202e] rounded-2xl p-6 shadow-sm border border-gray-100 dark:border-gray-800"
+          >
+            <h3 class="font-bold text-[#111317] dark:text-white mb-4">Ações Rápidas</h3>
+            <div class="flex flex-col gap-2">
+              <button
+                class="flex items-center gap-3 px-4 py-3 bg-[#f0f1f4] dark:bg-gray-800 rounded-xl hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors text-left"
+              >
+                <span class="material-symbols-outlined text-[#3f70e4]">add_circle</span>
+                <span class="text-sm font-medium text-[#111317] dark:text-white"
+                  >Registrar Falta</span
+                >
+              </button>
+              <button
+                class="flex items-center gap-3 px-4 py-3 bg-[#f0f1f4] dark:bg-gray-800 rounded-xl hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors text-left"
+              >
+                <span class="material-symbols-outlined text-[#3f70e4]">description</span>
+                <span class="text-sm font-medium text-[#111317] dark:text-white"
+                  >Ver Materiais</span
+                >
+              </button>
+              <button
+                class="flex items-center gap-3 px-4 py-3 bg-[#f0f1f4] dark:bg-gray-800 rounded-xl hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors text-left"
+              >
+                <span class="material-symbols-outlined text-[#3f70e4]">assignment</span>
+                <span class="text-sm font-medium text-[#111317] dark:text-white"
+                  >Ver Atividades</span
+                >
+              </button>
+            </div>
+          </div>
+
+          <!-- Info Card -->
+          <div
+            class="bg-gradient-to-br from-[#3f70e4]/10 to-blue-50/50 dark:from-blue-900/20 dark:to-blue-800/10 rounded-2xl p-6 border border-[#3f70e4]/20 dark:border-blue-800/30"
+          >
+            <div class="flex items-center gap-2 mb-3 text-[#3f70e4] dark:text-blue-400">
+              <span class="material-symbols-outlined text-[20px]">lightbulb</span>
+              <span class="text-xs font-bold uppercase tracking-wide">Dica</span>
+            </div>
+            <p class="text-sm text-[#111317] dark:text-gray-300 leading-relaxed">
+              Mantenha sua frequência acima de 75% para garantir aprovação na disciplina. Você está
+              indo bem!
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Delete Modal -->
+    @if (showDeleteModal()) {
+      <div
+        class="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4"
+        (click)="cancelDelete()"
+      >
+        <div
+          class="bg-white dark:bg-[#1a202e] rounded-2xl p-6 max-w-md w-full shadow-xl"
+          (click)="$event.stopPropagation()"
+        >
+          <div class="flex items-center gap-3 mb-4">
+            <div
+              class="w-12 h-12 bg-red-100 dark:bg-red-900/30 rounded-full flex items-center justify-center"
+            >
+              <span class="material-symbols-outlined text-red-600 dark:text-red-400 text-2xl"
+                >warning</span
+              >
+            </div>
+            <h3 class="text-xl font-bold text-[#111317] dark:text-white">Excluir Disciplina</h3>
+          </div>
+          <p class="text-[#646e87] dark:text-gray-400 mb-6">
+            Tem certeza que deseja excluir <strong>{{ disc.nome }}</strong
+            >? Esta ação não pode ser desfeita.
+          </p>
+          <div class="flex gap-3">
+            <button
+              (click)="cancelDelete()"
+              class="flex-1 px-4 py-2.5 bg-gray-100 dark:bg-gray-800 text-[#111317] dark:text-white rounded-xl hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors font-medium"
+            >
+              Cancelar
+            </button>
+            <button
+              (click)="deleteDisciplina()"
+              class="flex-1 px-4 py-2.5 bg-red-600 text-white rounded-xl hover:bg-red-700 transition-colors font-medium"
+            >
+              Excluir
+            </button>
+          </div>
+        </div>
+      </div>
+    }
+  </div>
+} @else {
+  <div class="flex items-center justify-center h-screen">
+    <div class="text-center">
+      <div
+        class="w-16 h-16 border-4 border-[#3f70e4] border-t-transparent rounded-full animate-spin mx-auto mb-4"
+      ></div>
+      <p class="text-[#646e87] dark:text-gray-400">Carregando...</p>
+    </div>
+  </div>
+}

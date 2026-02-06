@@ -1,1 +1,327 @@
-<p>disciplinas-form works!</p>
+<div class="min-h-full bg-[#f0f1f4] dark:bg-[#0d1117]">
+  <!-- Header -->
+  <header class="w-full px-6 py-4 flex items-center justify-between max-w-[960px] mx-auto">
+    <a
+      routerLink="/disciplinas"
+      class="flex items-center gap-2 text-[#3f70e4] cursor-pointer hover:opacity-80 transition-opacity"
+    >
+      <span class="material-symbols-outlined text-2xl">arrow_back</span>
+      <span class="font-medium text-sm">Voltar para Disciplinas</span>
+    </a>
+  </header>
+
+  <!-- Content Container -->
+  <div class="px-4 md:px-6 flex flex-1 justify-center pb-12">
+    <div class="flex flex-col max-w-[800px] flex-1 w-full gap-8">
+      <!-- Page Heading -->
+      <div class="flex flex-col gap-2 mt-4">
+        <h1
+          class="text-[#111317] dark:text-white tracking-tight text-[32px] font-bold leading-tight"
+        >
+          {{ isEditMode() ? 'Editar Disciplina' : 'Adicionar Disciplina' }}
+        </h1>
+        <p class="text-[#646e87] dark:text-gray-400 text-base font-normal leading-normal">
+          Configure os detalhes, horários e cores para sua
+          {{ isEditMode() ? 'disciplina' : 'nova matéria' }} no Grimore.
+        </p>
+      </div>
+
+      <!-- Main Form Card -->
+      <form
+        [formGroup]="form"
+        (ngSubmit)="onSubmit()"
+        class="bg-white dark:bg-[#1a202e] rounded-2xl shadow-sm border border-gray-100 dark:border-gray-800 p-6 md:p-8 flex flex-col gap-8"
+      >
+        <!-- Section: Basic Info -->
+        <div class="flex flex-col gap-6">
+          <div class="flex flex-col md:flex-row gap-6">
+            <!-- Name Input -->
+            <label class="flex flex-col flex-[2] gap-2">
+              <span class="text-[#111317] dark:text-gray-200 text-sm font-semibold leading-normal">
+                Nome da Matéria <span class="text-red-500">*</span>
+              </span>
+              <div class="relative">
+                <span
+                  class="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 material-symbols-outlined"
+                  >menu_book</span
+                >
+                <input
+                  formControlName="nome"
+                  class="form-input flex w-full resize-none overflow-hidden rounded-xl text-[#111317] dark:text-white focus:outline-0 focus:ring-2 focus:ring-[#3f70e4]/50 border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-800 focus:border-[#3f70e4] h-14 placeholder:text-[#646e87] dark:placeholder:text-gray-500 pl-12 pr-4 text-base font-normal leading-normal transition-all"
+                  placeholder="Ex: Cálculo I"
+                />
+              </div>
+              @if (form.get('nome')?.touched && form.get('nome')?.hasError('required')) {
+                <span class="text-xs text-red-500">Nome da disciplina é obrigatório</span>
+              }
+            </label>
+
+            <!-- Code Input -->
+            <label class="flex flex-col flex-1 gap-2">
+              <span class="text-[#111317] dark:text-gray-200 text-sm font-semibold leading-normal">
+                Código <span class="text-gray-400 font-normal text-xs">(Opcional)</span>
+              </span>
+              <div class="relative">
+                <span
+                  class="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 material-symbols-outlined"
+                  >qr_code</span
+                >
+                <input
+                  formControlName="codigo"
+                  class="form-input flex w-full resize-none overflow-hidden rounded-xl text-[#111317] dark:text-white focus:outline-0 focus:ring-2 focus:ring-[#3f70e4]/50 border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-800 focus:border-[#3f70e4] h-14 placeholder:text-[#646e87] dark:placeholder:text-gray-500 pl-12 pr-4 text-base font-normal leading-normal transition-all"
+                  placeholder="Ex: MAT101"
+                />
+              </div>
+            </label>
+          </div>
+
+          <!-- Professor Input -->
+          <label class="flex flex-col gap-2">
+            <span class="text-[#111317] dark:text-gray-200 text-sm font-semibold leading-normal">
+              Professor(a) <span class="text-gray-400 font-normal text-xs">(Opcional)</span>
+            </span>
+            <div class="relative">
+              <span
+                class="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 material-symbols-outlined"
+                >person</span
+              >
+              <input
+                formControlName="professor"
+                class="form-input flex w-full resize-none overflow-hidden rounded-xl text-[#111317] dark:text-white focus:outline-0 focus:ring-2 focus:ring-[#3f70e4]/50 border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-800 focus:border-[#3f70e4] h-14 placeholder:text-[#646e87] dark:placeholder:text-gray-500 pl-12 pr-4 text-base font-normal leading-normal transition-all"
+                placeholder="Ex: Prof. João Silva"
+              />
+            </div>
+          </label>
+
+          <div class="flex flex-col md:flex-row gap-8 items-start">
+            <!-- Hours Dropdown -->
+            <label class="flex flex-col flex-1 w-full gap-2">
+              <span class="text-[#111317] dark:text-gray-200 text-sm font-semibold leading-normal">
+                Carga Horária Total <span class="text-red-500">*</span>
+              </span>
+              <div class="relative">
+                <span
+                  class="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 material-symbols-outlined"
+                  >schedule</span
+                >
+                <select
+                  formControlName="cargaHoraria"
+                  class="form-select flex w-full resize-none overflow-hidden rounded-xl text-[#111317] dark:text-white focus:outline-0 focus:ring-2 focus:ring-[#3f70e4]/50 border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-800 focus:border-[#3f70e4] h-14 pl-12 pr-10 text-base font-normal leading-normal appearance-none transition-all cursor-pointer"
+                >
+                  <option value="30">30 horas</option>
+                  <option value="45">45 horas</option>
+                  <option value="60">60 horas</option>
+                  <option value="72">72 horas</option>
+                  <option value="90">90 horas</option>
+                  <option value="120">120 horas</option>
+                </select>
+                <span
+                  class="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 material-symbols-outlined pointer-events-none"
+                  >expand_more</span
+                >
+              </div>
+            </label>
+
+            <!-- Color Picker -->
+            <div class="flex flex-col gap-2 flex-1 w-full">
+              <span class="text-[#111317] dark:text-gray-200 text-sm font-semibold leading-normal"
+                >Cor da Etiqueta</span
+              >
+              <div class="flex flex-wrap gap-3 py-2">
+                @for (cor of cores; track cor.value) {
+                  <label
+                    class="cursor-pointer group relative size-10 rounded-full flex items-center justify-center transition-transform active:scale-95"
+                  >
+                    <input
+                      type="radio"
+                      [value]="cor.value"
+                      formControlName="cor"
+                      class="peer sr-only"
+                    />
+                    <div
+                      [class]="
+                        'size-10 rounded-full ' +
+                        cor.class +
+                        ' border border-transparent peer-checked:border-2 peer-checked:border-offset-2 peer-checked:ring-2 peer-checked:ring-offset-1 dark:peer-checked:ring-offset-gray-800'
+                      "
+                    ></div>
+                    <span
+                      class="material-symbols-outlined absolute text-white opacity-0 peer-checked:opacity-100 text-xl font-bold"
+                      >check</span
+                    >
+                  </label>
+                }
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Divider -->
+        <div class="border-t border-gray-100 dark:border-gray-800"></div>
+
+        <!-- Section: Horários e Dias -->
+        <div class="flex flex-col gap-6">
+          <div class="flex items-center gap-3">
+            <span class="material-symbols-outlined text-[#3f70e4]">calendar_today</span>
+            <h3 class="text-[#111317] dark:text-white text-xl font-bold">Horários e Dias</h3>
+          </div>
+
+          <!-- Dias da Semana -->
+          <div class="flex flex-col gap-3">
+            <span class="text-[#111317] dark:text-gray-200 text-sm font-semibold"
+              >Dias da Semana</span
+            >
+            <div class="flex flex-wrap gap-2">
+              @for (dia of diasSemana; track dia.value) {
+                <button
+                  type="button"
+                  (click)="toggleDia(dia.value)"
+                  [class]="
+                    isDiaSelected(dia.value)
+                      ? 'px-5 py-2.5 rounded-xl bg-[#3f70e4] text-white font-medium text-sm transition-all shadow-sm'
+                      : 'px-5 py-2.5 rounded-xl bg-white dark:bg-gray-800 text-[#646e87] dark:text-gray-300 border border-gray-200 dark:border-gray-700 hover:border-[#3f70e4] font-medium text-sm transition-all'
+                  "
+                >
+                  {{ dia.label }}
+                </button>
+              }
+            </div>
+          </div>
+
+          <!-- Horários por Dia -->
+          <div formArrayName="horarios" class="flex flex-col gap-6">
+            @for (dia of diasSemana; track dia.value) {
+              @if (isDiaSelected(dia.value)) {
+                <div class="bg-[#f0f1f4] dark:bg-gray-800/50 rounded-2xl p-5">
+                  <div class="flex items-center justify-between mb-4">
+                    <span class="font-bold text-[#111317] dark:text-white">{{ dia.label }}</span>
+                    <button
+                      type="button"
+                      (click)="addHorarioForDia(dia.value)"
+                      class="flex items-center gap-1 text-[#3f70e4] text-sm font-medium hover:underline"
+                    >
+                      <span class="material-symbols-outlined text-[18px]">add</span>
+                      Adicionar horário
+                    </button>
+                  </div>
+
+                  @for (horarioControl of getHorariosForDia(dia.value); track $index) {
+                    <div
+                      [formGroupName]="horarios.controls.indexOf(horarioControl)"
+                      class="mb-4 last:mb-0"
+                    >
+                      <div
+                        class="grid grid-cols-1 md:grid-cols-[auto_1fr_1fr_auto] gap-3 items-end"
+                      >
+                        <!-- Turno -->
+                        <div class="flex flex-col gap-2">
+                          <span
+                            class="text-xs font-semibold text-[#646e87] dark:text-gray-400 uppercase"
+                            >Turno</span
+                          >
+                          <div class="flex gap-1 bg-white dark:bg-gray-900 rounded-lg p-1">
+                            <button
+                              type="button"
+                              (click)="horarioControl.patchValue({ turno: 'manha' })"
+                              [class]="
+                                horarioControl.value.turno === 'manha'
+                                  ? 'px-3 py-2 rounded-md bg-[#3f70e4] text-white text-xs font-medium transition-all'
+                                  : 'px-3 py-2 rounded-md text-[#646e87] dark:text-gray-400 text-xs font-medium hover:bg-gray-50 dark:hover:bg-gray-800 transition-all'
+                              "
+                            >
+                              Manhã
+                            </button>
+                            <button
+                              type="button"
+                              (click)="horarioControl.patchValue({ turno: 'tarde' })"
+                              [class]="
+                                horarioControl.value.turno === 'tarde'
+                                  ? 'px-3 py-2 rounded-md bg-[#3f70e4] text-white text-xs font-medium transition-all'
+                                  : 'px-3 py-2 rounded-md text-[#646e87] dark:text-gray-400 text-xs font-medium hover:bg-gray-50 dark:hover:bg-gray-800 transition-all'
+                              "
+                            >
+                              Tarde
+                            </button>
+                            <button
+                              type="button"
+                              (click)="horarioControl.patchValue({ turno: 'noite' })"
+                              [class]="
+                                horarioControl.value.turno === 'noite'
+                                  ? 'px-3 py-2 rounded-md bg-[#3f70e4] text-white text-xs font-medium transition-all'
+                                  : 'px-3 py-2 rounded-md text-[#646e87] dark:text-gray-400 text-xs font-medium hover:bg-gray-50 dark:hover:bg-gray-800 transition-all'
+                              "
+                            >
+                              Noite
+                            </button>
+                          </div>
+                        </div>
+
+                        <!-- Hora Início -->
+                        <div class="flex flex-col gap-2">
+                          <span
+                            class="text-xs font-semibold text-[#646e87] dark:text-gray-400 uppercase"
+                            >Início</span
+                          >
+                          <input
+                            type="time"
+                            formControlName="horaInicio"
+                            class="form-input rounded-xl text-[#111317] dark:text-white focus:outline-0 focus:ring-2 focus:ring-[#3f70e4]/50 border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-900 h-11 px-3 text-sm"
+                          />
+                        </div>
+
+                        <!-- Hora Fim -->
+                        <div class="flex flex-col gap-2">
+                          <span
+                            class="text-xs font-semibold text-[#646e87] dark:text-gray-400 uppercase"
+                            >Fim</span
+                          >
+                          <input
+                            type="time"
+                            formControlName="horaFim"
+                            class="form-input rounded-xl text-[#111317] dark:text-white focus:outline-0 focus:ring-2 focus:ring-[#3f70e4]/50 border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-900 h-11 px-3 text-sm"
+                          />
+                        </div>
+
+                        <!-- Remove Button -->
+                        @if (getHorariosForDia(dia.value).length > 1) {
+                          <button
+                            type="button"
+                            (click)="removeHorario(horarios.controls.indexOf(horarioControl))"
+                            class="p-2 text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-colors"
+                          >
+                            <span class="material-symbols-outlined">delete</span>
+                          </button>
+                        }
+                      </div>
+                    </div>
+                  }
+                </div>
+              }
+            }
+          </div>
+        </div>
+
+        <!-- Divider -->
+        <div class="border-t border-gray-100 dark:border-gray-800"></div>
+
+        <!-- Action Buttons -->
+        <div class="flex gap-3 justify-end">
+          <button
+            type="button"
+            (click)="cancel()"
+            class="px-6 py-3 rounded-xl bg-gray-100 dark:bg-gray-800 text-[#111317] dark:text-white font-medium hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
+          >
+            Cancelar
+          </button>
+          <button
+            type="submit"
+            class="flex items-center gap-2 px-6 py-3 rounded-xl bg-[#3f70e4] text-white font-medium hover:bg-[#3562c5] transition-colors shadow-sm"
+          >
+            <span class="material-symbols-outlined">save</span>
+            {{ isEditMode() ? 'Salvar Alterações' : 'Salvar Disciplina' }}
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
