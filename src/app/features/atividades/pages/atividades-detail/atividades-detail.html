@@ -1,1 +1,252 @@
-<p>atividades-detail works!</p>
+@if (atividade(); as ativ) {
+  <div class="flex flex-col h-full max-w-5xl mx-auto">
+    <!-- Breadcrumb -->
+    <div class="flex items-center gap-2 mb-6 text-sm text-slate-600 dark:text-slate-400">
+      <button
+        (click)="goBack()"
+        class="hover:text-[#3f70e4] transition-colors flex items-center gap-1"
+      >
+        <span class="material-symbols-outlined text-lg">arrow_back</span>
+        <span>Tarefas</span>
+      </button>
+      <span>/</span>
+      <span class="text-slate-900 dark:text-white">Detalhes da Tarefa</span>
+    </div>
+
+    <!-- Header -->
+    <div class="mb-6">
+      <h1 class="text-3xl font-bold text-slate-900 dark:text-white mb-2">Detalhes da Tarefa</h1>
+      <p class="text-slate-600 dark:text-slate-400">
+        Gerencie prazos, status e informações desta atividade acadêmica.
+      </p>
+    </div>
+
+    <!-- Progress Bar (Gradient) -->
+    <div class="h-1.5 w-full bg-slate-200 dark:bg-slate-700 rounded-full mb-8 overflow-hidden">
+      <div
+        [class]="'h-full bg-gradient-to-r ' + getCorClass(ativ.disciplinaCor || 'slate')"
+        [style.width.%]="concluida() ? 100 : 50"
+      ></div>
+    </div>
+
+    <!-- Main Card -->
+    <div
+      class="bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700 p-6 md:p-8 mb-6"
+    >
+      <!-- Header Section -->
+      <div class="flex flex-col md:flex-row md:items-start md:justify-between gap-4 mb-6">
+        <div class="flex-1">
+          <div class="flex items-center gap-3 mb-3">
+            @if (ativ.disciplinaNome) {
+              <span
+                class="px-3 py-1 rounded-lg text-sm font-medium flex items-center gap-1"
+                [class]="getCorBadgeClass(ativ.disciplinaCor || 'slate')"
+              >
+                <span class="material-symbols-outlined text-base">palette</span>
+                {{ ativ.disciplinaNome }}
+              </span>
+            }
+            <span
+              class="px-3 py-1 bg-slate-100 dark:bg-slate-700 rounded-lg text-sm font-medium text-slate-700 dark:text-slate-300 uppercase"
+            >
+              {{ getTipoInfo(ativ.tipo)?.label }}
+            </span>
+          </div>
+        </div>
+
+        <!-- Toggle Concluída -->
+        <div class="flex items-center gap-3 bg-slate-50 dark:bg-slate-700/30 rounded-xl px-4 py-3">
+          <label class="text-sm font-medium text-slate-900 dark:text-white"
+            >Marcar como concluída</label
+          >
+          <button
+            type="button"
+            (click)="toggleConcluida()"
+            [class]="concluida() ? 'bg-[#3f70e4]' : 'bg-slate-300 dark:bg-slate-600'"
+            class="relative w-12 h-6 rounded-full transition-colors"
+          >
+            <div
+              [class]="concluida() ? 'translate-x-6' : 'translate-x-1'"
+              class="absolute top-1 w-4 h-4 bg-white rounded-full transition-transform shadow-md"
+            ></div>
+          </button>
+        </div>
+      </div>
+
+      <!-- Title and Description -->
+      <div class="mb-8">
+        <h2 class="text-2xl font-bold text-slate-900 dark:text-white mb-4">
+          {{ ativ.titulo }}
+        </h2>
+        @if (ativ.descricao) {
+          <p class="text-slate-600 dark:text-slate-400 leading-relaxed">
+            {{ ativ.descricao }}
+          </p>
+        }
+      </div>
+
+      <!-- Info Grid -->
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+        <!-- Data de Entrega -->
+        <div class="bg-slate-50 dark:bg-slate-700/30 rounded-xl p-4">
+          <div class="flex items-center gap-2 text-slate-600 dark:text-slate-400 mb-2">
+            <span class="material-symbols-outlined text-lg">event</span>
+            <span class="text-xs font-medium uppercase tracking-wider">Data de Entrega</span>
+          </div>
+          @if (ativ.dataEntrega) {
+            <p class="text-lg font-bold text-slate-900 dark:text-white">
+              {{ formatDate(ativ.dataEntrega) }}
+            </p>
+            @if (ativ.horaEntrega) {
+              <p class="text-sm text-slate-600 dark:text-slate-400">às {{ ativ.horaEntrega }}</p>
+            } @else {
+              <p class="text-sm text-slate-600 dark:text-slate-400">Faltam 3 dias</p>
+            }
+          } @else {
+            <p class="text-lg font-bold text-slate-500 dark:text-slate-400">Sem prazo</p>
+          }
+        </div>
+
+        <!-- Criado em -->
+        <div class="bg-slate-50 dark:bg-slate-700/30 rounded-xl p-4">
+          <div class="flex items-center gap-2 text-slate-600 dark:text-slate-400 mb-2">
+            <span class="material-symbols-outlined text-lg">schedule</span>
+            <span class="text-xs font-medium uppercase tracking-wider">Criado em</span>
+          </div>
+          <p class="text-lg font-bold text-slate-900 dark:text-white">
+            {{ formatDate(ativ.createdAt) }}
+          </p>
+          <p class="text-sm text-slate-600 dark:text-slate-400">
+            às {{ formatDateTime(ativ.createdAt).split(',')[1] }}
+          </p>
+        </div>
+
+        <!-- Atualizado -->
+        <div class="bg-slate-50 dark:bg-slate-700/30 rounded-xl p-4">
+          <div class="flex items-center gap-2 text-slate-600 dark:text-slate-400 mb-2">
+            <span class="material-symbols-outlined text-lg">update</span>
+            <span class="text-xs font-medium uppercase tracking-wider">Atualizado</span>
+          </div>
+          <p class="text-lg font-bold text-slate-900 dark:text-white">
+            {{ formatDate(ativ.updatedAt) }}
+          </p>
+          <p class="text-sm text-slate-600 dark:text-slate-400">
+            às {{ formatDateTime(ativ.updatedAt).split(',')[1] }}
+          </p>
+        </div>
+
+        <!-- Prioridade -->
+        <div class="bg-slate-50 dark:bg-slate-700/30 rounded-xl p-4">
+          <div class="flex items-center gap-2 text-slate-600 dark:text-slate-400 mb-2">
+            <span class="material-symbols-outlined text-lg">flag</span>
+            <span class="text-xs font-medium uppercase tracking-wider">Prioridade</span>
+          </div>
+          <div class="flex items-center gap-2">
+            <p
+              class="text-lg font-bold"
+              [class]="
+                getPrioridadeInfo(ativ.prioridade)?.color || 'text-slate-900 dark:text-white'
+              "
+            >
+              {{ getPrioridadeInfo(ativ.prioridade)?.label }}
+            </p>
+            @if (ativ.prioridade === 'alta') {
+              <div class="flex gap-0.5">
+                <div class="w-1.5 h-1.5 rounded-full bg-red-500"></div>
+                <div class="w-1.5 h-1.5 rounded-full bg-red-500"></div>
+                <div class="w-1.5 h-1.5 rounded-full bg-red-500"></div>
+              </div>
+            }
+          </div>
+        </div>
+      </div>
+
+      <!-- Anotações e Detalhes -->
+      @if (ativ.anotacoes) {
+        <div class="border-t border-slate-200 dark:border-slate-700 pt-6">
+          <div class="flex items-center gap-2 mb-4">
+            <span class="material-symbols-outlined text-slate-600 dark:text-slate-400">notes</span>
+            <h3 class="text-lg font-bold text-slate-900 dark:text-white">Anotações e Detalhes</h3>
+          </div>
+          <div class="bg-slate-50 dark:bg-slate-700/30 rounded-xl p-4">
+            <p class="text-slate-700 dark:text-slate-300 whitespace-pre-wrap leading-relaxed">
+              {{ ativ.anotacoes }}
+            </p>
+          </div>
+        </div>
+      }
+    </div>
+
+    <!-- Actions Card -->
+    <div
+      class="bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700 p-6"
+    >
+      <h3 class="text-lg font-bold text-slate-900 dark:text-white mb-4">Ações Rápidas</h3>
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+        <button
+          (click)="editAtividade()"
+          class="flex items-center justify-center gap-2 px-4 py-3 bg-[#3f70e4] hover:bg-[#2d5acc] text-white rounded-xl font-medium transition-colors"
+        >
+          <span class="material-symbols-outlined">edit</span>
+          <span>Editar</span>
+        </button>
+        <button
+          (click)="shareAtividade()"
+          class="flex items-center justify-center gap-2 px-4 py-3 bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 text-slate-900 dark:text-white rounded-xl font-medium transition-colors"
+        >
+          <span class="material-symbols-outlined">share</span>
+          <span>Compartilhar</span>
+        </button>
+        <button
+          (click)="confirmDelete()"
+          class="flex items-center justify-center gap-2 px-4 py-3 bg-slate-100 dark:bg-slate-700 hover:bg-red-50 dark:hover:bg-red-900/20 text-slate-700 dark:text-slate-300 hover:text-red-600 dark:hover:text-red-400 rounded-xl font-medium transition-colors"
+        >
+          <span class="material-symbols-outlined">delete</span>
+          <span>Excluir</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal de Confirmação de Exclusão -->
+  @if (showDeleteModal()) {
+    <div
+      (click)="cancelDelete()"
+      class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4 animate-in fade-in duration-200"
+    >
+      <div
+        (click)="$event.stopPropagation()"
+        class="bg-white dark:bg-slate-800 rounded-2xl shadow-2xl border border-slate-200 dark:border-slate-700 w-full max-w-md p-6 animate-in zoom-in-95 duration-200"
+      >
+        <div class="text-center mb-6">
+          <div
+            class="w-16 h-16 bg-red-100 dark:bg-red-900/30 rounded-full flex items-center justify-center mx-auto mb-4"
+          >
+            <span class="material-symbols-outlined text-red-600 dark:text-red-400 text-3xl"
+              >warning</span
+            >
+          </div>
+          <h3 class="text-xl font-bold text-slate-900 dark:text-white mb-2">Excluir Tarefa?</h3>
+          <p class="text-slate-600 dark:text-slate-400">
+            Esta ação não pode ser desfeita. A tarefa será permanentemente removida.
+          </p>
+        </div>
+
+        <div class="flex gap-3">
+          <button
+            (click)="cancelDelete()"
+            class="flex-1 px-4 py-3 rounded-xl bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 text-slate-900 dark:text-white font-medium transition-colors"
+          >
+            Cancelar
+          </button>
+          <button
+            (click)="deleteAtividade()"
+            class="flex-1 px-4 py-3 rounded-xl bg-red-600 hover:bg-red-700 text-white font-medium transition-colors"
+          >
+            Excluir
+          </button>
+        </div>
+      </div>
+    </div>
+  }
+}

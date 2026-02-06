@@ -1,1 +1,218 @@
-<p>atividades-form works!</p>
+<div class="flex flex-col h-full max-w-4xl mx-auto">
+  <!-- Header -->
+  <div class="mb-8 animate-in fade-in-up duration-200">
+    <h1 class="text-3xl font-bold text-slate-900 dark:text-white mb-2">
+      {{ isEditMode() ? 'Editar Evento' : 'Novo Evento' }} ✨
+    </h1>
+    <p class="text-slate-600 dark:text-slate-400">
+      {{
+        isEditMode()
+          ? 'Atualize as informações da sua tarefa'
+          : 'Adicione uma nova tarefa ao seu grimório acadêmico'
+      }}
+    </p>
+  </div>
+
+  <!-- Form Card -->
+  <div
+    class="bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700 p-6 md:p-8 animate-in fade-in-up duration-300"
+  >
+    <form [formGroup]="form" (ngSubmit)="onSubmit()" class="space-y-8">
+      <!-- Section: Tipo de Atividade -->
+      <div class="space-y-4">
+        <h3 class="text-lg font-bold text-slate-900 dark:text-white">O que é?</h3>
+        <div class="flex flex-wrap gap-3">
+          @for (tipo of tiposAtividade; track tipo.value) {
+            <button
+              type="button"
+              (click)="selectTipo(tipo.value)"
+              [class]="
+                selectedTipo() === tipo.value
+                  ? 'bg-[#3f70e4] text-white ring-2 ring-[#3f70e4] ring-offset-2 ring-offset-white dark:ring-offset-slate-800 shadow-lg shadow-blue-500/20'
+                  : 'bg-slate-100 dark:bg-slate-700 text-slate-900 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-600'
+              "
+              class="flex items-center gap-2 px-4 py-2.5 rounded-xl transition-all font-medium"
+            >
+              <span class="material-symbols-outlined text-xl">{{ tipo.icon }}</span>
+              <span>{{ tipo.label }} {{ tipo.emoji }}</span>
+            </button>
+          }
+        </div>
+      </div>
+
+      <!-- Divider -->
+      <div class="h-px bg-slate-200 dark:bg-slate-700"></div>
+
+      <!-- Section: Informações Principais -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <!-- Disciplina -->
+        <div class="space-y-2">
+          <label class="block text-base font-medium text-slate-900 dark:text-white">
+            Disciplina
+          </label>
+          <select
+            formControlName="disciplinaId"
+            class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-700/50 border border-slate-200 dark:border-slate-600 rounded-xl text-slate-900 dark:text-white focus:ring-2 focus:ring-[#3f70e4] focus:border-transparent transition-shadow"
+          >
+            <option value="">Selecione uma disciplina</option>
+            @for (disciplina of disciplinas; track disciplina.id) {
+              <option [value]="disciplina.id">{{ disciplina.nome }}</option>
+            }
+          </select>
+        </div>
+
+        <!-- Título -->
+        <div class="space-y-2">
+          <label class="block text-base font-medium text-slate-900 dark:text-white">
+            Título <span class="text-red-500">*</span>
+          </label>
+          <input
+            type="text"
+            formControlName="titulo"
+            placeholder="Ex: Entrega da Lista 02"
+            class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-700/50 border rounded-xl text-slate-900 dark:text-white placeholder:text-slate-500 focus:ring-2 focus:ring-[#3f70e4] focus:border-transparent transition-shadow"
+            [class.border-red-500]="form.get('titulo')?.invalid && form.get('titulo')?.touched"
+            [class.border-slate-200]="!(form.get('titulo')?.invalid && form.get('titulo')?.touched)"
+            [class.dark:border-slate-600]="
+              !(form.get('titulo')?.invalid && form.get('titulo')?.touched)
+            "
+          />
+          @if (form.get('titulo')?.invalid && form.get('titulo')?.touched) {
+            <p class="text-sm text-red-500">Título é obrigatório</p>
+          }
+        </div>
+
+        <!-- Data de Entrega -->
+        <div class="space-y-2">
+          <label class="block text-base font-medium text-slate-900 dark:text-white"> Data </label>
+          <input
+            type="date"
+            formControlName="dataEntrega"
+            class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-700/50 border border-slate-200 dark:border-slate-600 rounded-xl text-slate-900 dark:text-white focus:ring-2 focus:ring-[#3f70e4] focus:border-transparent transition-shadow"
+          />
+        </div>
+
+        <!-- Hora -->
+        <div class="space-y-2">
+          <label class="block text-base font-medium text-slate-900 dark:text-white"> Hora </label>
+          <input
+            type="time"
+            formControlName="horaEntrega"
+            class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-700/50 border border-slate-200 dark:border-slate-600 rounded-xl text-slate-900 dark:text-white focus:ring-2 focus:ring-[#3f70e4] focus:border-transparent transition-shadow"
+          />
+        </div>
+      </div>
+
+      <!-- Descrição -->
+      <div class="space-y-2">
+        <label class="block text-base font-medium text-slate-900 dark:text-white">
+          Descrição
+        </label>
+        <textarea
+          formControlName="descricao"
+          rows="3"
+          placeholder="Adicione detalhes sobre a tarefa..."
+          class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-700/50 border border-slate-200 dark:border-slate-600 rounded-xl text-slate-900 dark:text-white placeholder:text-slate-500 focus:ring-2 focus:ring-[#3f70e4] focus:border-transparent transition-shadow resize-none"
+        ></textarea>
+      </div>
+
+      <!-- Divider -->
+      <div class="h-px bg-slate-200 dark:bg-slate-700"></div>
+
+      <!-- Section: Opções Adicionais -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <!-- Prioridade -->
+        <div class="space-y-2">
+          <label class="block text-base font-medium text-slate-900 dark:text-white">
+            Prioridade <span class="text-red-500">*</span>
+          </label>
+          <select
+            formControlName="prioridade"
+            class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-700/50 border border-slate-200 dark:border-slate-600 rounded-xl text-slate-900 dark:text-white focus:ring-2 focus:ring-[#3f70e4] focus:border-transparent transition-shadow"
+          >
+            @for (prioridade of prioridades; track prioridade.value) {
+              <option [value]="prioridade.value">{{ prioridade.label }}</option>
+            }
+          </select>
+        </div>
+
+        <!-- Status Inicial -->
+        <div class="space-y-2">
+          <label class="block text-base font-medium text-slate-900 dark:text-white">
+            Status Inicial <span class="text-red-500">*</span>
+          </label>
+          <select
+            formControlName="status"
+            class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-700/50 border border-slate-200 dark:border-slate-600 rounded-xl text-slate-900 dark:text-white focus:ring-2 focus:ring-[#3f70e4] focus:border-transparent transition-shadow"
+          >
+            @for (status of statusOptions; track status.value) {
+              <option [value]="status.value">{{ status.label }}</option>
+            }
+          </select>
+        </div>
+      </div>
+
+      <!-- Anotações -->
+      <div class="space-y-2">
+        <label class="block text-base font-medium text-slate-900 dark:text-white">
+          Anotações e Detalhes
+        </label>
+        <textarea
+          formControlName="anotacoes"
+          rows="4"
+          placeholder="Adicione observações, links ou informações extras..."
+          class="w-full px-4 py-3 bg-slate-50 dark:bg-slate-700/50 border border-slate-200 dark:border-slate-600 rounded-xl text-slate-900 dark:text-white placeholder:text-slate-500 focus:ring-2 focus:ring-[#3f70e4] focus:border-transparent transition-shadow resize-none"
+        ></textarea>
+      </div>
+
+      <!-- Lembrete IA -->
+      <div
+        class="bg-slate-50 dark:bg-slate-700/30 rounded-xl p-4 flex items-center justify-between"
+      >
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 bg-[#3f70e4]/10 rounded-full flex items-center justify-center">
+            <span class="material-symbols-outlined text-[#3f70e4]">notifications</span>
+          </div>
+          <div>
+            <p class="font-medium text-slate-900 dark:text-white">Lembrete</p>
+            <p class="text-sm text-slate-600 dark:text-slate-400">Ativar via IA</p>
+          </div>
+        </div>
+        <button
+          type="button"
+          (click)="toggleLembrete()"
+          [class]="lembreteIA() ? 'bg-[#3f70e4]' : 'bg-slate-300 dark:bg-slate-600'"
+          class="relative w-12 h-6 rounded-full transition-colors"
+        >
+          <div
+            [class]="lembreteIA() ? 'translate-x-6' : 'translate-x-1'"
+            class="absolute top-1 w-4 h-4 bg-white rounded-full transition-transform shadow-md"
+          ></div>
+        </button>
+      </div>
+
+      <!-- Divider -->
+      <div class="h-px bg-slate-200 dark:bg-slate-700"></div>
+
+      <!-- Actions -->
+      <div class="flex gap-4 justify-end">
+        <button
+          type="button"
+          (click)="cancel()"
+          class="px-6 py-3 rounded-xl bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 text-slate-900 dark:text-white font-medium transition-colors"
+        >
+          Cancelar
+        </button>
+        <button
+          type="submit"
+          class="px-6 py-3 rounded-xl bg-[#3f70e4] hover:bg-[#2d5acc] text-white font-medium transition-colors flex items-center gap-2"
+        >
+          <span class="material-symbols-outlined">{{
+            isEditMode() ? 'save' : 'event_available'
+          }}</span>
+          <span>{{ isEditMode() ? 'Salvar' : 'Agendar' }}</span>
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

@@ -1,1 +1,450 @@
-<p>atividades-list works!</p>
+<div class="flex flex-col h-full">
+  <!-- Header -->
+  <div class="mb-8">
+    <h1 class="text-3xl font-bold text-slate-900 dark:text-white mb-2">Minhas Tarefas</h1>
+    <p class="text-slate-600 dark:text-slate-400">Acompanhe seu progresso e prazos acadêmicos</p>
+  </div>
+
+  <!-- Filters and Search -->
+  <div class="flex flex-col sm:flex-row gap-4 mb-6">
+    <!-- Filter Chips -->
+    <div class="flex flex-wrap gap-2">
+      <button
+        (click)="setFilter('todas')"
+        [class]="
+          selectedFilter() === 'todas'
+            ? 'bg-[#3f70e4] text-white'
+            : 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700'
+        "
+        class="px-4 py-2 rounded-lg text-sm font-medium transition-colors"
+      >
+        Todos
+      </button>
+      <button
+        (click)="setFilter('a-fazer')"
+        [class]="
+          selectedFilter() === 'a-fazer'
+            ? 'bg-[#3f70e4] text-white'
+            : 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700'
+        "
+        class="px-4 py-2 rounded-lg text-sm font-medium transition-colors flex items-center gap-2"
+      >
+        A Fazer
+        @if (contadores().aFazer > 0) {
+          <span class="bg-white/20 px-2 py-0.5 rounded-full text-xs">{{
+            contadores().aFazer
+          }}</span>
+        }
+      </button>
+      <button
+        (click)="setFilter('concluidas')"
+        [class]="
+          selectedFilter() === 'concluidas'
+            ? 'bg-[#3f70e4] text-white'
+            : 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700'
+        "
+        class="px-4 py-2 rounded-lg text-sm font-medium transition-colors"
+      >
+        Concluídos
+      </button>
+    </div>
+
+    <!-- Search -->
+    <div class="flex-1 sm:max-w-md relative">
+      <span
+        class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"
+      >
+        search
+      </span>
+      <input
+        type="text"
+        placeholder="Pesquisar disciplina, tarefa..."
+        [value]="searchQuery()"
+        (input)="onSearchChange($event)"
+        class="w-full pl-10 pr-4 py-2 bg-slate-100 dark:bg-slate-800 border-0 rounded-lg text-slate-900 dark:text-white placeholder:text-slate-500 focus:ring-2 focus:ring-[#3f70e4] transition-shadow"
+      />
+    </div>
+
+    <!-- Data Sort Button -->
+    <button
+      class="flex items-center gap-2 px-4 py-2 bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 rounded-lg hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors"
+    >
+      <span class="material-symbols-outlined text-xl">sort</span>
+      <span class="text-sm font-medium">Data</span>
+    </button>
+  </div>
+
+  <!-- Tasks List -->
+  <div class="flex-1 overflow-y-auto space-y-6">
+    <!-- Grupo: HOJE -->
+    @if (atividadesAgrupadas().hoje.length > 0) {
+      <div>
+        <h2
+          class="text-sm font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-3"
+        >
+          HOJE
+        </h2>
+        <div class="space-y-3">
+          @for (atividade of atividadesAgrupadas().hoje; track atividade.id) {
+            <div
+              (click)="goToDetail(atividade.id)"
+              class="group bg-white dark:bg-slate-800 rounded-xl border-l-4 p-4 cursor-pointer transition-all hover:shadow-md hover:-translate-y-0.5"
+              [class]="getCorClass(atividade.disciplinaCor || 'slate')"
+            >
+              <div class="flex items-center gap-4">
+                <!-- Checkbox -->
+                <button
+                  (click)="toggleConcluida(atividade, $event)"
+                  class="w-6 h-6 rounded-full border-2 shrink-0 flex items-center justify-center transition-colors"
+                  [class]="
+                    atividade.concluida
+                      ? 'bg-[#3f70e4] border-[#3f70e4]'
+                      : 'border-slate-300 dark:border-slate-600 hover:border-[#3f70e4]'
+                  "
+                >
+                  @if (atividade.concluida) {
+                    <span class="material-symbols-outlined text-white text-sm">check</span>
+                  }
+                </button>
+
+                <!-- Content -->
+                <div class="flex-1 min-w-0">
+                  <div class="flex items-start justify-between gap-3">
+                    <div class="flex-1 min-w-0">
+                      <h3
+                        class="font-medium text-slate-900 dark:text-white mb-1 group-hover:text-[#3f70e4] transition-colors"
+                        [class.line-through]="atividade.concluida"
+                        [class.text-slate-500]="atividade.concluida"
+                      >
+                        {{ atividade.titulo }}
+                      </h3>
+                      <div class="flex flex-wrap items-center gap-2 text-sm">
+                        @if (atividade.disciplinaNome) {
+                          <span
+                            class="px-2 py-0.5 rounded-md text-xs font-medium"
+                            [class]="getCorBadgeClass(atividade.disciplinaCor || 'slate')"
+                          >
+                            ● {{ atividade.disciplinaNome }}
+                          </span>
+                        }
+                        <span
+                          class="px-2 py-0.5 bg-slate-100 dark:bg-slate-700 rounded-md text-xs font-medium text-slate-700 dark:text-slate-300 uppercase"
+                        >
+                          {{ getTipoInfo(atividade.tipo)?.label }}
+                        </span>
+                      </div>
+                    </div>
+
+                    <!-- Date and Actions -->
+                    <div class="flex items-center gap-2">
+                      @if (atividade.dataEntrega && !atividade.concluida) {
+                        <div class="flex items-center gap-1 text-sm">
+                          <span class="material-symbols-outlined text-orange-500 text-lg"
+                            >schedule</span
+                          >
+                          <span class="font-medium text-orange-500">{{
+                            formatDate(atividade.dataEntrega)
+                          }}</span>
+                        </div>
+                      }
+                      <button
+                        (click)="openActionsModal(atividade, $event)"
+                        class="p-1 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors opacity-0 group-hover:opacity-100"
+                      >
+                        <span class="material-symbols-outlined text-slate-400">more_vert</span>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          }
+        </div>
+      </div>
+    }
+
+    <!-- Grupo: PRÓXIMA SEMANA -->
+    @if (atividadesAgrupadas().proximaSemana.length > 0) {
+      <div>
+        <h2
+          class="text-sm font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-3"
+        >
+          PRÓXIMA SEMANA
+        </h2>
+        <div class="space-y-3">
+          @for (atividade of atividadesAgrupadas().proximaSemana; track atividade.id) {
+            <div
+              (click)="goToDetail(atividade.id)"
+              class="group bg-white dark:bg-slate-800 rounded-xl border-l-4 p-4 cursor-pointer transition-all hover:shadow-md hover:-translate-y-0.5"
+              [class]="getCorClass(atividade.disciplinaCor || 'slate')"
+            >
+              <div class="flex items-center gap-4">
+                <button
+                  (click)="toggleConcluida(atividade, $event)"
+                  class="w-6 h-6 rounded-full border-2 shrink-0 flex items-center justify-center transition-colors"
+                  [class]="
+                    atividade.concluida
+                      ? 'bg-[#3f70e4] border-[#3f70e4]'
+                      : 'border-slate-300 dark:border-slate-600 hover:border-[#3f70e4]'
+                  "
+                >
+                  @if (atividade.concluida) {
+                    <span class="material-symbols-outlined text-white text-sm">check</span>
+                  }
+                </button>
+
+                <div class="flex-1 min-w-0">
+                  <div class="flex items-start justify-between gap-3">
+                    <div class="flex-1 min-w-0">
+                      <h3
+                        class="font-medium text-slate-900 dark:text-white mb-1 group-hover:text-[#3f70e4] transition-colors"
+                        [class.line-through]="atividade.concluida"
+                        [class.text-slate-500]="atividade.concluida"
+                      >
+                        {{ atividade.titulo }}
+                      </h3>
+                      <div class="flex flex-wrap items-center gap-2 text-sm">
+                        @if (atividade.disciplinaNome) {
+                          <span
+                            class="px-2 py-0.5 rounded-md text-xs font-medium"
+                            [class]="getCorBadgeClass(atividade.disciplinaCor || 'slate')"
+                          >
+                            ● {{ atividade.disciplinaNome }}
+                          </span>
+                        }
+                        <span
+                          class="px-2 py-0.5 bg-slate-100 dark:bg-slate-700 rounded-md text-xs font-medium text-slate-700 dark:text-slate-300 uppercase"
+                        >
+                          {{ getTipoInfo(atividade.tipo)?.label }}
+                        </span>
+                      </div>
+                    </div>
+
+                    <div class="flex items-center gap-2">
+                      @if (atividade.dataEntrega) {
+                        <div class="flex items-center gap-1 text-sm">
+                          <span class="material-symbols-outlined text-slate-400 text-lg"
+                            >calendar_today</span
+                          >
+                          <span class="text-slate-600 dark:text-slate-400">{{
+                            formatDate(atividade.dataEntrega)
+                          }}</span>
+                        </div>
+                      }
+                      <button
+                        (click)="openActionsModal(atividade, $event)"
+                        class="p-1 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors opacity-0 group-hover:opacity-100"
+                      >
+                        <span class="material-symbols-outlined text-slate-400">more_vert</span>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          }
+        </div>
+      </div>
+    }
+
+    <!-- Grupo: CONCLUÍDOS -->
+    @if (atividadesAgrupadas().concluidas.length > 0 && selectedFilter() !== 'a-fazer') {
+      <div>
+        <h2
+          class="text-sm font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-3"
+        >
+          CONCLUÍDOS
+        </h2>
+        <div class="space-y-3">
+          @for (atividade of atividadesAgrupadas().concluidas; track atividade.id) {
+            <div
+              (click)="goToDetail(atividade.id)"
+              class="group bg-white dark:bg-slate-800 rounded-xl border-l-4 border-slate-300 dark:border-slate-700 p-4 cursor-pointer transition-all hover:shadow-md hover:-translate-y-0.5 opacity-60"
+            >
+              <div class="flex items-center gap-4">
+                <button
+                  (click)="toggleConcluida(atividade, $event)"
+                  class="w-6 h-6 rounded-full border-2 bg-[#3f70e4] border-[#3f70e4] shrink-0 flex items-center justify-center"
+                >
+                  <span class="material-symbols-outlined text-white text-sm">check</span>
+                </button>
+
+                <div class="flex-1 min-w-0">
+                  <div class="flex items-start justify-between gap-3">
+                    <div class="flex-1 min-w-0">
+                      <h3 class="font-medium text-slate-500 dark:text-slate-400 mb-1 line-through">
+                        {{ atividade.titulo }}
+                      </h3>
+                      <div class="flex flex-wrap items-center gap-2 text-sm">
+                        @if (atividade.disciplinaNome) {
+                          <span
+                            class="px-2 py-0.5 bg-slate-100 dark:bg-slate-700 rounded-md text-xs font-medium text-slate-500 dark:text-slate-400"
+                          >
+                            {{ atividade.disciplinaNome }}
+                          </span>
+                        }
+                      </div>
+                    </div>
+
+                    <div class="flex items-center gap-2">
+                      <span class="material-symbols-outlined text-slate-400 text-lg"
+                        >check_circle</span
+                      >
+                      <span class="text-xs text-slate-400">Ontem</span>
+                      <button
+                        (click)="openActionsModal(atividade, $event)"
+                        class="p-1 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors opacity-0 group-hover:opacity-100"
+                      >
+                        <span class="material-symbols-outlined text-slate-400">more_vert</span>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          }
+        </div>
+      </div>
+    }
+
+    <!-- Empty State -->
+    @if (filteredAtividades().length === 0) {
+      <div class="flex flex-col items-center justify-center py-16 text-center">
+        <div
+          class="w-20 h-20 bg-slate-100 dark:bg-slate-800 rounded-full flex items-center justify-center mb-4"
+        >
+          <span class="material-symbols-outlined text-slate-400 text-4xl">check_circle</span>
+        </div>
+        <h3 class="text-lg font-semibold text-slate-900 dark:text-white mb-2">
+          Nenhuma tarefa encontrada
+        </h3>
+        <p class="text-slate-600 dark:text-slate-400 max-w-sm">
+          @if (searchQuery()) {
+            Tente buscar por outros termos
+          } @else {
+            Você está em dia! Adicione novas tarefas para acompanhar.
+          }
+        </p>
+      </div>
+    }
+  </div>
+
+  <!-- Floating Action Button -->
+  <button
+    (click)="addAtividade()"
+    class="fixed bottom-8 right-8 w-14 h-14 bg-[#3f70e4] hover:bg-[#2d5acc] text-white rounded-full shadow-lg hover:shadow-xl transition-all flex items-center justify-center group z-10"
+  >
+    <span class="material-symbols-outlined text-2xl group-hover:rotate-90 transition-transform"
+      >add</span
+    >
+  </button>
+</div>
+
+<!-- Modal de Ações -->
+@if (showActionsModal() && selectedAtividade()) {
+  <div
+    (click)="closeActionsModal()"
+    class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4 animate-in fade-in duration-200"
+  >
+    <div
+      (click)="$event.stopPropagation()"
+      class="bg-white dark:bg-slate-800 rounded-2xl shadow-2xl border border-slate-200 dark:border-slate-700 w-full max-w-sm overflow-hidden animate-in zoom-in-95 duration-200"
+    >
+      <!-- Close Button -->
+      <button
+        (click)="closeActionsModal()"
+        class="absolute top-4 right-4 p-2 rounded-full text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors"
+      >
+        <span class="material-symbols-outlined text-xl">close</span>
+      </button>
+
+      <!-- Header -->
+      <div class="pt-8 pb-2 px-6 text-center">
+        <div
+          class="w-12 h-12 mb-4 mx-auto rounded-full bg-[#3f70e4]/10 flex items-center justify-center"
+        >
+          <span class="material-symbols-outlined text-[#3f70e4] text-2xl">school</span>
+        </div>
+        <h2 class="text-xl font-bold text-slate-900 dark:text-white mb-1">
+          {{ selectedAtividade()!.titulo }}
+        </h2>
+        @if (selectedAtividade()!.disciplinaNome) {
+          <p class="text-sm text-slate-500 dark:text-slate-400">
+            {{ selectedAtividade()!.disciplinaNome }}
+          </p>
+        }
+      </div>
+
+      <!-- Actions -->
+      <div class="p-6 space-y-3">
+        @if (!selectedAtividade()!.concluida) {
+          <button
+            (click)="toggleConcluida(selectedAtividade()!, $event); closeActionsModal()"
+            class="w-full flex items-center gap-3 p-4 rounded-xl bg-[#3f70e4] hover:bg-[#2d5acc] text-white transition-colors"
+          >
+            <span class="material-symbols-outlined">check_circle</span>
+            <span class="font-medium">Marcar como Concluída</span>
+          </button>
+        }
+
+        <button
+          (click)="editAtividade(selectedAtividade()!.id)"
+          class="w-full flex items-center gap-3 p-4 rounded-xl bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 text-slate-900 dark:text-white transition-colors"
+        >
+          <span class="material-symbols-outlined">edit</span>
+          <span class="font-medium">Editar Tarefa</span>
+        </button>
+
+        <button
+          (click)="confirmDelete(selectedAtividade()!.id)"
+          class="w-full flex items-center gap-3 p-4 rounded-xl bg-slate-100 dark:bg-slate-700 hover:bg-red-50 dark:hover:bg-red-900/20 text-slate-700 dark:text-slate-300 hover:text-red-600 dark:hover:text-red-400 transition-colors"
+        >
+          <span class="material-symbols-outlined">delete</span>
+          <span class="font-medium">Excluir</span>
+        </button>
+      </div>
+    </div>
+  </div>
+}
+
+<!-- Modal de Confirmação de Exclusão -->
+@if (showDeleteModal()) {
+  <div
+    (click)="cancelDelete()"
+    class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4 animate-in fade-in duration-200"
+  >
+    <div
+      (click)="$event.stopPropagation()"
+      class="bg-white dark:bg-slate-800 rounded-2xl shadow-2xl border border-slate-200 dark:border-slate-700 w-full max-w-md p-6 animate-in zoom-in-95 duration-200"
+    >
+      <div class="text-center mb-6">
+        <div
+          class="w-16 h-16 bg-red-100 dark:bg-red-900/30 rounded-full flex items-center justify-center mx-auto mb-4"
+        >
+          <span class="material-symbols-outlined text-red-600 dark:text-red-400 text-3xl"
+            >warning</span
+          >
+        </div>
+        <h3 class="text-xl font-bold text-slate-900 dark:text-white mb-2">Excluir Tarefa?</h3>
+        <p class="text-slate-600 dark:text-slate-400">
+          Esta ação não pode ser desfeita. A tarefa será permanentemente removida.
+        </p>
+      </div>
+
+      <div class="flex gap-3">
+        <button
+          (click)="cancelDelete()"
+          class="flex-1 px-4 py-3 rounded-xl bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 text-slate-900 dark:text-white font-medium transition-colors"
+        >
+          Cancelar
+        </button>
+        <button
+          (click)="deleteAtividade()"
+          class="flex-1 px-4 py-3 rounded-xl bg-red-600 hover:bg-red-700 text-white font-medium transition-colors"
+        >
+          Excluir
+        </button>
+      </div>
+    </div>
+  </div>
+}
