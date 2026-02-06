@@ -17,6 +17,25 @@ export const routes: Routes = [
         loadComponent: () =>
           import('./features/auth/pages/register/register').then((m) => m.Register),
       },
+      {
+        path: 'forgot-password',
+        loadComponent: () =>
+          import('./features/auth/pages/forgot-password/forgot-password').then(
+            (m) => m.ForgotPassword,
+          ),
+      },
+      {
+        path: 'verify-code',
+        loadComponent: () =>
+          import('./features/auth/pages/verify-code/verify-code').then((m) => m.VerifyCode),
+      },
+      {
+        path: 'reset-password',
+        loadComponent: () =>
+          import('./features/auth/pages/reset-password/reset-password').then(
+            (m) => m.ResetPassword,
+          ),
+      },
       { path: '', redirectTo: 'login', pathMatch: 'full' },
     ],
   },

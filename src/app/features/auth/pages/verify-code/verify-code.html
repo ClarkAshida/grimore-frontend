@@ -1,0 +1,80 @@
+<!-- Header -->
+<div class="flex flex-col gap-2 text-center">
+  <h2 class="text-[#111317] dark:text-white text-3xl font-bold tracking-tight">
+    Verificação de Código
+  </h2>
+  <p class="text-[#646e87] dark:text-gray-400 text-base font-normal">
+    Enviamos um código de 6 dígitos para
+    <span class="font-semibold text-[#3f70e4]">{{ email() }}</span
+    >.
+  </p>
+</div>
+
+<!-- Code Input -->
+<div class="flex flex-col gap-6">
+  <div class="flex justify-center gap-2 sm:gap-3">
+    @for (digit of code(); track $index) {
+      <input
+        #codeInput
+        type="text"
+        inputmode="numeric"
+        maxlength="1"
+        [value]="digit"
+        (input)="onInput($index, $event)"
+        (keydown)="onKeyDown($index, $event)"
+        [autofocus]="$index === 0"
+        placeholder="•"
+        class="code-input h-14 w-12 sm:w-14 text-center text-2xl font-bold bg-slate-50 dark:bg-slate-700 border-2 border-[#dcdfe5] dark:border-gray-700 rounded-xl focus:border-[#3f70e4] focus:ring-2 focus:ring-[#3f70e4]/20 transition-all outline-none text-[#111317] dark:text-white"
+      />
+    }
+  </div>
+
+  <!-- Error message -->
+  @if (errorMessage()) {
+    <div class="flex items-center justify-center gap-2 text-red-500 animate-in fade-in">
+      <span class="material-symbols-outlined text-xl">error</span>
+      <p class="text-sm font-medium">{{ errorMessage() }}</p>
+    </div>
+  }
+
+  <!-- Loading indicator -->
+  @if (isLoading()) {
+    <div class="flex items-center justify-center gap-2 text-[#3f70e4]">
+      <div
+        class="w-5 h-5 border-2 border-[#3f70e4]/30 border-t-[#3f70e4] rounded-full animate-spin"
+      ></div>
+      <p class="text-sm font-medium">Verificando...</p>
+    </div>
+  }
+</div>
+
+<!-- Actions -->
+<div class="flex flex-col gap-5">
+  <button
+    type="button"
+    (click)="verifyCode()"
+    [disabled]="hasEmptyDigit() || isLoading()"
+    class="flex w-full cursor-pointer items-center justify-center overflow-hidden rounded-xl h-12 px-5 bg-[#3f70e4] hover:bg-[#3f70e4]/90 transition-colors text-white text-base font-bold leading-normal tracking-[0.015em] shadow-lg shadow-[#3f70e4]/20 disabled:opacity-50 disabled:cursor-not-allowed"
+  >
+    @if (isLoading()) {
+      <div class="flex items-center gap-2">
+        <div
+          class="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"
+        ></div>
+        <span>Verificando...</span>
+      </div>
+    } @else {
+      <span>Confirmar Código</span>
+    }
+  </button>
+
+  <div class="text-center">
+    <button
+      type="button"
+      (click)="resendCode()"
+      class="text-[#3f70e4] hover:text-[#3f70e4]/90 text-sm font-semibold transition-colors hover:underline decoration-2 underline-offset-2"
+    >
+      Não recebeu o código? Reenviar
+    </button>
+  </div>
+</div>
